@@ -20,7 +20,6 @@
 #define BME280_SDA_PIN 21
 #define BME280_SCL_PIN 22
 
-
 // #define USE_ANDROID_AP 1
 
 // How often we refresh the time from the NTP server
@@ -92,9 +91,10 @@
 #define COUNTDOWN_CLOCK_SEGMENT_HEIGHT 10
 #define COUNTDOWN_CLOCK_SEGMENT_WIDTH 4
 #define COUNTDOWN_CLOCK_SEGMENT_SPACING 2
-// #define COUNTDOWN_COLOR_GREEN  ((0x00 & 0xF8) << 8) | ((0xFF & 0xFC) << 3) | (0x00 >> 3)
-// #define COUNTDOWN_COLOR_YELLOW ((0xFF & 0xF8) << 8) | ((0xFF & 0xFC) << 3) | (0x00 >> 3)
-// #define COUNTDOWN_COLOR_RED    ((0xFF & 0xF8) << 8) | ((0x00 & 0xFC) << 3) | (0x00 >> 3)
+// #define COUNTDOWN_COLOR_GREEN  ((0x00 & 0xF8) << 8) | ((0xFF & 0xFC) << 3) |
+// (0x00 >> 3) #define COUNTDOWN_COLOR_YELLOW ((0xFF & 0xF8) << 8) | ((0xFF &
+// 0xFC) << 3) | (0x00 >> 3) #define COUNTDOWN_COLOR_RED    ((0xFF & 0xF8) << 8)
+// | ((0x00 & 0xFC) << 3) | (0x00 >> 3)
 
 // Sensor data layout config
 #define L2_SENSOR_DATA_X 1
@@ -116,7 +116,7 @@
 // Ambiental sensor data
 #define SENSOR_AMB_DATA_WIDTH 40
 #define SENSOR_AMB_DATA_HEIGHT 8
-// #define SENSOR_AMB_ERROR_DATA_COLOR                                            \
+// #define SENSOR_AMB_ERROR_DATA_COLOR \
 //   ((0xFF & 0xF8) << 8) | ((0x00 & 0xFC) << 3) | (0x00 >> 3)
 #define AMB_REFRESH_INTERVAL_SEC 30
 

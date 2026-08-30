@@ -23,7 +23,7 @@
 #define R1_PIN 25
 #define G1_PIN 26
 #define B1_PIN 27
-//GND
+// GND
 #define R2_PIN 14
 #define G2_PIN 12
 #define B2_PIN 13
@@ -35,7 +35,7 @@
 #define CLK_PIN 16
 #define LAT_PIN 4
 #define OE_PIN 15
-//E' or GND
+// E' or GND
 
 /*
 4 5

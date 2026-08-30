@@ -4,8 +4,8 @@
 #include "settings.h"
 #include <Wire.h>
 
-#include <Adafruit_BME280.h>
 #include <Adafruit_AHTX0.h>
+#include <Adafruit_BME280.h>
 
 Adafruit_BME280 bme;
 Adafruit_AHTX0 aht;
@@ -28,7 +28,8 @@ void getAmbientalData() {
   if (active_sensor == SENSOR_TYPE_BME280) {
     sensorAmbTemp = bme.readTemperature();
     sensorAmbHumi = int(bme.readHumidity());
-    float absPressure = bme.readPressure() / 100.0F; // Convert Pa to hPa
+    // Convert Pa to hPa
+    float absPressure = bme.readPressure() / 100.0F;
     sensorPressure = int(absPressure);
     sensorMSLP = int(bme.seaLevelForAltitude(altitude_meters, absPressure));
   } else if (active_sensor == SENSOR_TYPE_AHT20) {

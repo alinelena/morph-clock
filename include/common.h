@@ -4,9 +4,9 @@
 #include "config.h"
 #include "rgb_display.h"
 
-#include <WiFi.h>
-#include <PubSubClient.h>
 #include <ESPNtpClient.h>
+#include <PubSubClient.h>
+#include <WiFi.h>
 
 extern WiFiClient wifiClient;
 
@@ -15,17 +15,17 @@ extern int status;
 // Initialize MQTT client
 extern PubSubClient client;
 
-//Time of last status update
+// Time of last status update
 extern unsigned long lastStatusSend;
 
-//Time of last sensor events
+// Time of last sensor events
 extern unsigned long lastSensorRead;
 // extern unsigned long lastLedBlink;
 
-//Log message persistence
-//Is a log message currently displayed?
+// Log message persistence
+// Is a log message currently displayed?
 extern bool logMessageActive;
-//When was the message shown?
+// When was the message shown?
 extern unsigned long messageDisplayMillis;
 
 // NTP
@@ -33,13 +33,13 @@ extern bool wifiFirstConnected;
 
 // extern bool syncEventTriggered; // True if a time event has been triggered
 
-//RGB display
+// RGB display
 extern MatrixPanel_I2S_DMA *dma_display;
 
-//Current time and date
+// Current time and date
 extern struct tm timeinfo;
 
-//Flags to trigger display section updates
+// Flags to trigger display section updates
 extern bool clockStartingUp;
 extern bool newSensorData;
 extern bool sensorDead;
@@ -49,11 +49,11 @@ extern int sensorHumi;
 extern int sensorPressure;
 extern int sensorMSLP;
 
-//The actual sensor data
+// The actual sensor data
 extern float sensorAmbTemp;
 extern int sensorAmbHumi;
 
-//Just a heartbeat for the watchdog...
+// Just a heartbeat for the watchdog...
 extern bool heartBeat;
 
 // Countdown layout state

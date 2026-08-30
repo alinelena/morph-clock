@@ -19,10 +19,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <Ticker.h>
 #include <esp_task_wdt.h>
 
-#include "env_sensor.h"
 #include "clock.h"
 #include "common.h"
 #include "creds_mqtt.h"
+#include "env_sensor.h"
 #include "main.h"
 #include "mqtt.h"
 #include "rgb_display.h"
@@ -80,19 +80,21 @@ void setup() {
     dma_display->print("192.168.4.1");
 
     unsigned long waitStart = millis();
-    while(millis() - waitStart < 10000) {
+    while (millis() - waitStart < 10000) {
       handleWebConfig();
       delay(10);
     }
 
     dma_display->clearScreen();
     displayTicker.attach_ms(30, displayUpdater);
-    return; // Don't proceed to NTP, MQTT etc.
+    // Don't proceed to NTP, MQTT etc.
+    return;
   }
 
   Serial.println("WiFi connected.");
   logStatusMessage("WiFi connected!");
-  initWebServer(); // Start web config on local network too
+  // Start web config on local network too
+  initWebServer();
 
   dma_display->clearScreen();
   dma_display->setTextSize(1);
@@ -104,15 +106,15 @@ void setup() {
   dma_display->print(WiFi.localIP().toString());
 
   unsigned long waitStart = millis();
-  while(millis() - waitStart < 10000) {
+  while (millis() - waitStart < 10000) {
     handleWebServer();
     delay(10);
   }
 
   logStatusMessage("Setup OTA...");
   ArduinoOTA.onStart([]() {
-      switchLayout(0);
-      logStatusMessage("OTA Start...");
+    switchLayout(0);
+    logStatusMessage("OTA Start...");
   });
   ArduinoOTA.onEnd([]() { logStatusMessage("OTA End!"); });
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
@@ -140,10 +142,12 @@ void setup() {
 
   esp_task_wdt_config_t wdt_config = {
       .timeout_ms =
-          WDT_TIMEOUT * 1000, // New API expects milliseconds, not seconds
-      .idle_core_mask = (1 << 0) | (1 << 1), // Watch both CPU cores (0 and 1)
-      .trigger_panic = true                  // Reboot on timeout
-  };
+          // New API expects milliseconds, not seconds
+      WDT_TIMEOUT * 1000,
+      // Watch both CPU cores (0 and 1)
+      .idle_core_mask = (1 << 0) | (1 << 1),
+      // Reboot on timeout
+      .trigger_panic = true};
   esp_task_wdt_reconfigure(&wdt_config);
   esp_task_wdt_add(NULL);
   logStatusMessage("Woof!");
@@ -166,9 +170,9 @@ void setup() {
 }
 void loop() {
   if (setupModeActive) {
-      handleWebConfig();
-      esp_task_wdt_reset();
-      return;
+    handleWebConfig();
+    esp_task_wdt_reset();
+    return;
   }
 
   if (WiFi.status() != WL_CONNECTED) {
@@ -176,7 +180,8 @@ void loop() {
     WiFi.reconnect();
   }
 
-  handleWebServer(); // Handle normal web server requests
+  // Handle normal web server requests
+  handleWebServer();
 
   if (!client.connected()) {
     logStatusMessage("MQTT lost");
@@ -235,27 +240,27 @@ void loop() {
   static bool forceRedraw = true;
 
   if (millis() - lastToggleTime > 10000) {
-      showAmbient = !showAmbient;
-      lastToggleTime = millis();
-      forceRedraw = true;
+    showAmbient = !showAmbient;
+    lastToggleTime = millis();
+    forceRedraw = true;
   }
 
   if (newSensorData && !showAmbient) {
-      forceRedraw = true;
+    forceRedraw = true;
   }
 
   if (forceRedraw) {
-      if (currentLayout == 1) {
-          displayAmbientalData();
-          displaySensorData();
-      } else if (currentLayout == 0) {
-          if (showAmbient) {
-              displayAmbientalData();
-          } else {
-              displaySensorData();
-          }
+    if (currentLayout == 1) {
+      displayAmbientalData();
+      displaySensorData();
+    } else if (currentLayout == 0) {
+      if (showAmbient) {
+        displayAmbientalData();
+      } else {
+        displaySensorData();
       }
-      forceRedraw = false;
+    }
+    forceRedraw = false;
   }
 
   // Scrolling info (IP and Hostname) at the bottom
@@ -273,13 +278,13 @@ void loop() {
 
 void displayUpdater() {
   if (setupModeActive) {
-      static uint8_t tick_count = 0;
-      if (++tick_count >= 5) {
-          rainbowWheelval++;
-          tick_count = 0;
-      }
-      drawRainbowBorder(rainbowWheelval);
-      return;
+    static uint8_t tick_count = 0;
+    if (++tick_count >= 5) {
+      rainbowWheelval++;
+      tick_count = 0;
+    }
+    drawRainbowBorder(rainbowWheelval);
+    return;
   }
 
   if (!getLocalTime(&timeinfo)) {
@@ -288,9 +293,11 @@ void displayUpdater() {
   }
 
   uint8_t new_brightness = display_brightness;
-  if (timeinfo.tm_hour >= 22) { // 10 PM to 11:59 PM
+  // 10 PM to 11:59 PM
+  if (timeinfo.tm_hour >= 22) {
     new_brightness = display_brightness / 2;
-  } else if (timeinfo.tm_hour >= 0 && timeinfo.tm_hour < 7) { // 12 AM to 7 AM
+    // 12 AM to 7 AM
+  } else if (timeinfo.tm_hour >= 0 && timeinfo.tm_hour < 7) {
     new_brightness = display_brightness / 4;
   } else {
     new_brightness = display_brightness;
@@ -314,9 +321,10 @@ void displayUpdater() {
 
   static uint8_t tick_count = 0;
 
-  if (++tick_count >= 5) { // 30ms * 5 = 150ms per step (slow & smooth fading)
-      rainbowWheelval++;
-      tick_count = 0;
+  // 30ms * 5 = 150ms per step (slow & smooth fading)
+  if (++tick_count >= 5) {
+    rainbowWheelval++;
+    tick_count = 0;
   }
   drawRainbowBorder(rainbowWheelval);
 
@@ -341,7 +349,8 @@ void displayUpdater() {
 // TODO - move TSL read to async task
 
 void switchLayout(int newLayout) {
-  if (currentLayout == newLayout) return;
+  if (currentLayout == newLayout)
+    return;
   applyLayout(newLayout);
   clockStartingUp = true;
   dma_display->clearScreen();

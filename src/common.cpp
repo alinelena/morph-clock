@@ -1,5 +1,5 @@
-#include "config.h"
 #include "common.h"
+#include "config.h"
 #include "mqtt.h"
 #include "rgb_display.h"
 
@@ -9,22 +9,21 @@ int status = WL_IDLE_STATUS;
 // Initialize MQTT client
 PubSubClient client(wifiClient);
 
-//Time of last status update
+// Time of last status update
 unsigned long lastStatusSend = 0;
 
-//Time of last client.loop()
+// Time of last client.loop()
 unsigned long lastLoop = 0;
-//Time of last weather sensor data receive
+// Time of last weather sensor data receive
 unsigned long lastSensorRead = 0;
-//Time of last light sensor read
+// Time of last light sensor read
 unsigned long lastLightRead = 0;
-
 
 // NTP
 const int8_t timeZone = 2;
 const int8_t minutesTimeZone = 0;
 bool wifiFirstConnected = false;
-//Current time
+// Current time
 struct tm timeinfo;
 
 // Display
@@ -35,13 +34,13 @@ bool clockStartingUp = true;
 bool newSensorData = false;
 bool sensorDead = true;
 
-//Heartbeat marker
+// Heartbeat marker
 bool heartBeat = true;
 
-//Log message persistence
-//Is a log message currently displayed?
+// Log message persistence
+// Is a log message currently displayed?
 bool logMessageActive = false;
-//When was the message shown?
+// When was the message shown?
 unsigned long messageDisplayMillis = 0;
 
 // Sensor data
@@ -62,7 +61,8 @@ uint16_t hexToRGB565(String hex) {
   if (hex.startsWith("#")) {
     hex = hex.substring(1);
   }
-  if (hex.length() != 6) return 0xFFFF;
+  if (hex.length() != 6)
+    return 0xFFFF;
 
   long number = strtol(hex.c_str(), NULL, 16);
   uint8_t r = (number >> 16) & 0xFF;

@@ -1,8 +1,8 @@
 #include "web_config.h"
 #include "settings.h"
-#include <WiFi.h>
-#include <WebServer.h>
 #include <DNSServer.h>
+#include <WebServer.h>
+#include <WiFi.h>
 
 const byte DNS_PORT = 53;
 IPAddress apIP(192, 168, 4, 1);
@@ -11,7 +11,7 @@ WebServer webServer(80);
 
 bool setupModeActive = false;
 
-const char* html_page PROGMEM = R"=====(
+const char *html_page PROGMEM = R"=====(
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -269,208 +269,219 @@ const char* html_page PROGMEM = R"=====(
 </html>
 )=====";
 
-void handleRoot() {
-    webServer.send(200, "text/html", html_page);
-}
+void handleRoot() { webServer.send(200, "text/html", html_page); }
 
 void handleGetSettings() {
-    String json = "{";
-    json += "\"wifi_ssid\":\"" + wifi_ssid + "\",";
-    json += "\"wifi_pass\":\"" + wifi_password + "\",";
-    json += "\"mqtt_server\":\"" + mqtt_server + "\",";
-    json += "\"mqtt_port\":\"" + String(mqtt_port) + "\",";
-    json += "\"mqtt_user\":\"" + mqtt_username + "\",";
-    json += "\"mqtt_pass\":\"" + mqtt_password + "\",";
-    json += "\"mqtt_temp\":\"" + mqtt_temp_topic + "\",";
-    json += "\"mqtt_humi\":\"" + mqtt_humi_topic + "\",";
-    json += "\"mqtt_pres\":\"" + mqtt_pres_topic + "\",";
-    json += "\"mqtt_layout\":\"" + mqtt_layout_topic + "\",";
-    json += "\"mqtt_count\":\"" + mqtt_count_topic + "\",";
-    json += "\"l1_amb_col\":\"" + l1_amb_color + "\",";
-    json += "\"l1_out_col\":\"" + l1_out_color + "\",";
-    json += "\"l1_clk_col\":\"" + l1_clock_color + "\",";
-    json += "\"l1_dat_col\":\"" + l1_date_color + "\",";
-    json += "\"l1_lin_col\":\"" + l1_line_color + "\",";
-    json += "\"l2_amb_col\":\"" + l2_amb_color + "\",";
-    json += "\"l2_out_col\":\"" + l2_out_color + "\",";
-    json += "\"l2_color\":\"" + l2_clock_color + "\",";
-    json += "\"l2_dat_col\":\"" + l2_date_color + "\",";
-    json += "\"log_color\":\"" + log_msg_color + "\",";
-    json += "\"scroll_col\":\"" + scroll_msg_color + "\",";
-    json += "\"l3_start\":\"" + l3_color_start + "\",";
-    json += "\"l3_warn\":\"" + l3_color_warn + "\",";
-    json += "\"l3_end\":\"" + l3_color_end + "\",";
-    json += "\"l3_thresh\":\"" + String(l3_yellow_threshold) + "\",";
-    json += "\"brightness\":\"" + String(display_brightness) + "\",";
-    json += "\"altitude\":\"" + String(altitude_meters) + "\",";
-    json += "\"tz\":\"" + timezone_str + "\",";
-    json += "\"l3_def_cnt\":\"" + String(l3_default_countdown) + "\",";
-    json += "\"def_layout\":\"" + String(default_layout) + "\",";
-    json += "\"act_sensor\":\"" + String(active_sensor) + "\"";
-    json += "}";
-    webServer.send(200, "application/json", json);
+  String json = "{";
+  json += "\"wifi_ssid\":\"" + wifi_ssid + "\",";
+  json += "\"wifi_pass\":\"" + wifi_password + "\",";
+  json += "\"mqtt_server\":\"" + mqtt_server + "\",";
+  json += "\"mqtt_port\":\"" + String(mqtt_port) + "\",";
+  json += "\"mqtt_user\":\"" + mqtt_username + "\",";
+  json += "\"mqtt_pass\":\"" + mqtt_password + "\",";
+  json += "\"mqtt_temp\":\"" + mqtt_temp_topic + "\",";
+  json += "\"mqtt_humi\":\"" + mqtt_humi_topic + "\",";
+  json += "\"mqtt_pres\":\"" + mqtt_pres_topic + "\",";
+  json += "\"mqtt_layout\":\"" + mqtt_layout_topic + "\",";
+  json += "\"mqtt_count\":\"" + mqtt_count_topic + "\",";
+  json += "\"l1_amb_col\":\"" + l1_amb_color + "\",";
+  json += "\"l1_out_col\":\"" + l1_out_color + "\",";
+  json += "\"l1_clk_col\":\"" + l1_clock_color + "\",";
+  json += "\"l1_dat_col\":\"" + l1_date_color + "\",";
+  json += "\"l1_lin_col\":\"" + l1_line_color + "\",";
+  json += "\"l2_amb_col\":\"" + l2_amb_color + "\",";
+  json += "\"l2_out_col\":\"" + l2_out_color + "\",";
+  json += "\"l2_color\":\"" + l2_clock_color + "\",";
+  json += "\"l2_dat_col\":\"" + l2_date_color + "\",";
+  json += "\"log_color\":\"" + log_msg_color + "\",";
+  json += "\"scroll_col\":\"" + scroll_msg_color + "\",";
+  json += "\"l3_start\":\"" + l3_color_start + "\",";
+  json += "\"l3_warn\":\"" + l3_color_warn + "\",";
+  json += "\"l3_end\":\"" + l3_color_end + "\",";
+  json += "\"l3_thresh\":\"" + String(l3_yellow_threshold) + "\",";
+  json += "\"brightness\":\"" + String(display_brightness) + "\",";
+  json += "\"altitude\":\"" + String(altitude_meters) + "\",";
+  json += "\"tz\":\"" + timezone_str + "\",";
+  json += "\"l3_def_cnt\":\"" + String(l3_default_countdown) + "\",";
+  json += "\"def_layout\":\"" + String(default_layout) + "\",";
+  json += "\"act_sensor\":\"" + String(active_sensor) + "\"";
+  json += "}";
+  webServer.send(200, "application/json", json);
 }
 
+#include "common.h"
 #include <ArduinoJson.h>
 #include <Update.h>
-#include "common.h"
 extern void switchLayout(int newLayout);
 
 void handleCountdownApi() {
-    if (!webServer.hasArg("action")) return webServer.send(400, "text/plain", "Missing action");
-    String action = webServer.arg("action");
-    
-    if (action == "start") {
-        int dur = webServer.arg("dur").toInt();
-        countdownDurationSec = dur;
-        countdownTargetMillis = millis() + (dur * 1000);
-        countdownPausedRemainingMs = (dur * 1000);
-        countdownActive = true;
-        switchLayout(2); // Layout 2 (Countdown internally)
-    } else if (action == "layout1") {
-        countdownActive = false;
-        switchLayout(1);
-    } else if (action == "layout2") {
-        countdownActive = false;
-        switchLayout(0);
-    } else if (action == "layout3") {
-        switchLayout(2);
-    } else if (action == "stop") {
-        if (countdownActive) {
-            countdownPausedRemainingMs = (long)countdownTargetMillis - millis();
-            countdownActive = false; // paused
-        }
-    } else if (action == "resume") {
-        if (!countdownActive && countdownPausedRemainingMs != 0) {
-            countdownTargetMillis = millis() + countdownPausedRemainingMs;
-            countdownActive = true;
-            switchLayout(2);
-        }
-    } else if (action == "reset") {
-        countdownActive = false;
-        int dur = webServer.arg("dur").toInt();
-        countdownDurationSec = dur;
-        countdownPausedRemainingMs = (dur * 1000);
-        countdownTargetMillis = millis() + countdownPausedRemainingMs;
-        switchLayout(2);
-        clockStartingUp = true;
+  if (!webServer.hasArg("action"))
+    return webServer.send(400, "text/plain", "Missing action");
+  String action = webServer.arg("action");
+
+  if (action == "start") {
+    int dur = webServer.arg("dur").toInt();
+    countdownDurationSec = dur;
+    countdownTargetMillis = millis() + (dur * 1000);
+    countdownPausedRemainingMs = (dur * 1000);
+    countdownActive = true;
+    // Layout 2 (Countdown internally)
+    switchLayout(2);
+  } else if (action == "layout1") {
+    countdownActive = false;
+    switchLayout(1);
+  } else if (action == "layout2") {
+    countdownActive = false;
+    switchLayout(0);
+  } else if (action == "layout3") {
+    switchLayout(2);
+  } else if (action == "stop") {
+    if (countdownActive) {
+      countdownPausedRemainingMs = (long)countdownTargetMillis - millis();
+      // paused
+      countdownActive = false;
     }
-    webServer.send(200, "application/json", "{\"status\":\"ok\"}");
+  } else if (action == "resume") {
+    if (!countdownActive && countdownPausedRemainingMs != 0) {
+      countdownTargetMillis = millis() + countdownPausedRemainingMs;
+      countdownActive = true;
+      switchLayout(2);
+    }
+  } else if (action == "reset") {
+    countdownActive = false;
+    int dur = webServer.arg("dur").toInt();
+    countdownDurationSec = dur;
+    countdownPausedRemainingMs = (dur * 1000);
+    countdownTargetMillis = millis() + countdownPausedRemainingMs;
+    switchLayout(2);
+    clockStartingUp = true;
+  }
+  webServer.send(200, "application/json", "{\"status\":\"ok\"}");
 }
 
 void handleSave() {
-    if (webServer.hasArg("plain") == false) return webServer.send(400, "text/plain", "Body not received");
-    
-    String body = webServer.arg("plain");
-    DynamicJsonDocument doc(4096);
-    if (deserializeJson(doc, body)) return webServer.send(400, "text/plain", "Invalid JSON");
+  if (webServer.hasArg("plain") == false)
+    return webServer.send(400, "text/plain", "Body not received");
 
-    wifi_ssid = doc["wifi_ssid"].as<String>();
-    wifi_password = doc["wifi_pass"].as<String>();
-    mqtt_server = doc["mqtt_server"].as<String>();
-    mqtt_port = doc["mqtt_port"].as<int>();
-    mqtt_username = doc["mqtt_user"].as<String>();
-    mqtt_password = doc["mqtt_pass"].as<String>();
-    mqtt_temp_topic = doc["mqtt_temp"].as<String>();
-    mqtt_humi_topic = doc["mqtt_humi"].as<String>();
-    mqtt_pres_topic = doc["mqtt_pres"].as<String>();
-    mqtt_layout_topic = doc["mqtt_layout"].as<String>();
-    mqtt_count_topic = doc["mqtt_count"].as<String>();
-    
-    l1_amb_color = doc["l1_amb_col"].as<String>();
-    l1_out_color = doc["l1_out_col"].as<String>();
-    l1_clock_color = doc["l1_clk_col"].as<String>();
-    l1_date_color = doc["l1_dat_col"].as<String>();
-    l1_line_color = doc["l1_lin_col"].as<String>();
-    l2_amb_color = doc["l2_amb_col"].as<String>();
-    l2_out_color = doc["l2_out_col"].as<String>();
-    l2_clock_color = doc["l2_color"].as<String>();
-    l2_date_color = doc["l2_dat_col"].as<String>();
-    log_msg_color = doc["log_color"].as<String>();
-    scroll_msg_color = doc["scroll_col"].as<String>();
-    l3_color_start = doc["l3_start"].as<String>();
-    l3_color_warn = doc["l3_warn"].as<String>();
-    l3_color_end = doc["l3_end"].as<String>();
-    l3_yellow_threshold = doc["l3_thresh"].as<int>();
-    l3_default_countdown = doc["l3_def_cnt"].as<int>();
-    display_brightness = doc["brightness"].as<int>();
-    altitude_meters = doc["altitude"].as<int>();
-    timezone_str = doc["tz"].as<String>();
-    default_layout = doc["def_layout"].as<int>();
-    active_sensor = doc["act_sensor"].as<int>();
+  String body = webServer.arg("plain");
+  DynamicJsonDocument doc(4096);
+  if (deserializeJson(doc, body))
+    return webServer.send(400, "text/plain", "Invalid JSON");
 
-    saveSettings();
-    webServer.send(200, "application/json", "{\"status\":\"ok\"}");
-    
-    // We can't restart immediately or the browser won't receive the HTTP 200 OK.
-    // We signal the main loop to restart after 1 second.
-    extern bool shouldReboot;
-    extern unsigned long rebootTimer;
-    shouldReboot = true;
-    rebootTimer = millis();
+  wifi_ssid = doc["wifi_ssid"].as<String>();
+  wifi_password = doc["wifi_pass"].as<String>();
+  mqtt_server = doc["mqtt_server"].as<String>();
+  mqtt_port = doc["mqtt_port"].as<int>();
+  mqtt_username = doc["mqtt_user"].as<String>();
+  mqtt_password = doc["mqtt_pass"].as<String>();
+  mqtt_temp_topic = doc["mqtt_temp"].as<String>();
+  mqtt_humi_topic = doc["mqtt_humi"].as<String>();
+  mqtt_pres_topic = doc["mqtt_pres"].as<String>();
+  mqtt_layout_topic = doc["mqtt_layout"].as<String>();
+  mqtt_count_topic = doc["mqtt_count"].as<String>();
+
+  l1_amb_color = doc["l1_amb_col"].as<String>();
+  l1_out_color = doc["l1_out_col"].as<String>();
+  l1_clock_color = doc["l1_clk_col"].as<String>();
+  l1_date_color = doc["l1_dat_col"].as<String>();
+  l1_line_color = doc["l1_lin_col"].as<String>();
+  l2_amb_color = doc["l2_amb_col"].as<String>();
+  l2_out_color = doc["l2_out_col"].as<String>();
+  l2_clock_color = doc["l2_color"].as<String>();
+  l2_date_color = doc["l2_dat_col"].as<String>();
+  log_msg_color = doc["log_color"].as<String>();
+  scroll_msg_color = doc["scroll_col"].as<String>();
+  l3_color_start = doc["l3_start"].as<String>();
+  l3_color_warn = doc["l3_warn"].as<String>();
+  l3_color_end = doc["l3_end"].as<String>();
+  l3_yellow_threshold = doc["l3_thresh"].as<int>();
+  l3_default_countdown = doc["l3_def_cnt"].as<int>();
+  display_brightness = doc["brightness"].as<int>();
+  altitude_meters = doc["altitude"].as<int>();
+  timezone_str = doc["tz"].as<String>();
+  default_layout = doc["def_layout"].as<int>();
+  active_sensor = doc["act_sensor"].as<int>();
+
+  saveSettings();
+  webServer.send(200, "application/json", "{\"status\":\"ok\"}");
+
+  // We can't restart immediately or the browser won't receive the HTTP 200 OK.
+  // We signal the main loop to restart after 1 second.
+  extern bool shouldReboot;
+  extern unsigned long rebootTimer;
+  shouldReboot = true;
+  rebootTimer = millis();
 }
 
 void initWebServer() {
-    webServer.on("/", HTTP_GET, handleRoot);
-    webServer.on("/settings", HTTP_GET, handleGetSettings);
-    webServer.on("/save", HTTP_POST, handleSave);
-    webServer.on("/api/countdown", HTTP_POST, handleCountdownApi);
-    
-    // Firmware OTA Update endpoint
-    webServer.on("/update", HTTP_POST, []() {
+  webServer.on("/", HTTP_GET, handleRoot);
+  webServer.on("/settings", HTTP_GET, handleGetSettings);
+  webServer.on("/save", HTTP_POST, handleSave);
+  webServer.on("/api/countdown", HTTP_POST, handleCountdownApi);
+
+  // Firmware OTA Update endpoint
+  webServer.on(
+      "/update", HTTP_POST,
+      []() {
         webServer.sendHeader("Connection", "close");
-        webServer.send(200, "text/plain", (Update.hasError()) ? "UPDATE FAILED" : "UPDATE SUCCESSFUL, REBOOTING...");
+        webServer.send(200, "text/plain",
+                       (Update.hasError()) ? "UPDATE FAILED"
+                                           : "UPDATE SUCCESSFUL, REBOOTING...");
         delay(1000);
         ESP.restart();
-    }, []() {
-        HTTPUpload& upload = webServer.upload();
+      },
+      []() {
+        HTTPUpload &upload = webServer.upload();
         if (upload.status == UPLOAD_FILE_START) {
-            if (!Update.begin(UPDATE_SIZE_UNKNOWN)) {
-                Update.printError(Serial);
-            }
+          if (!Update.begin(UPDATE_SIZE_UNKNOWN)) {
+            Update.printError(Serial);
+          }
         } else if (upload.status == UPLOAD_FILE_WRITE) {
-            if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
-                Update.printError(Serial);
-            }
+          if (Update.write(upload.buf, upload.currentSize) !=
+              upload.currentSize) {
+            Update.printError(Serial);
+          }
         } else if (upload.status == UPLOAD_FILE_END) {
-            if (Update.end(true)) {
-                Serial.printf("Update Success: %u\nRebooting...\n", upload.totalSize);
-            } else {
-                Update.printError(Serial);
-            }
+          if (Update.end(true)) {
+            Serial.printf("Update Success: %u\nRebooting...\n",
+                          upload.totalSize);
+          } else {
+            Update.printError(Serial);
+          }
         }
-    });
+      });
 
-    webServer.onNotFound(handleRoot); // Captive portal fallback
-    
-    webServer.begin();
+  // Captive portal fallback
+  webServer.onNotFound(handleRoot);
+
+  webServer.begin();
 }
 
 void initWebConfigAP() {
-    setupModeActive = true;
-    WiFi.disconnect();
-    WiFi.mode(WIFI_AP);
-    WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
-    WiFi.softAP("MorphClock");
-    
-    dnsServer.start(DNS_PORT, "*", apIP);
-    initWebServer();
+  setupModeActive = true;
+  WiFi.disconnect();
+  WiFi.mode(WIFI_AP);
+  WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
+  WiFi.softAP("MorphClock");
+
+  dnsServer.start(DNS_PORT, "*", apIP);
+  initWebServer();
 }
 
 bool shouldReboot = false;
 unsigned long rebootTimer = 0;
 
 void handleWebServer() {
-    webServer.handleClient();
-    
-    if (shouldReboot && millis() - rebootTimer > 1000) {
-        ESP.restart();
-    }
+  webServer.handleClient();
+
+  if (shouldReboot && millis() - rebootTimer > 1000) {
+    ESP.restart();
+  }
 }
 
 void handleWebConfig() {
-    if (setupModeActive) {
-        dnsServer.processNextRequest();
-        handleWebServer();
-    }
+  if (setupModeActive) {
+    dnsServer.processNextRequest();
+    handleWebServer();
+  }
 }

@@ -1,9 +1,9 @@
 #include "rgb_display.h"
-#include "settings.h"
-#include <WiFi.h>
 #include "clock.h"
 #include "driver/gpio.h"
+#include "settings.h"
 #include <ESP32-HUB75-MatrixPanel-I2S-DMA.h>
+#include <WiFi.h>
 
 #include "common.h"
 #include <Fonts/TomThumb.h>
@@ -29,11 +29,8 @@ void display_init() {
                                    B2_PIN, A_PIN,   B_PIN,  C_PIN,  D_PIN,
                                    E_PIN,  LAT_PIN, OE_PIN, CLK_PIN};
 
-  HUB75_I2S_CFG mxconfig(PANEL_WIDTH,  // Module width
-                         PANEL_HEIGHT, // Module height
-                         1,            // chain length
-                         _pins         // pin mapping
-  );
+  // Module width, Module height, chain length, pin mapping
+  HUB75_I2S_CFG mxconfig(PANEL_WIDTH, PANEL_HEIGHT, 1, _pins);
   mxconfig.gpio.e = E_PIN;
 
   mxconfig.driver = HUB75_I2S_CFG::SHIFTREG;
@@ -49,18 +46,20 @@ void display_init() {
 
 void logStatusMessage(const char *message) {
   Serial.println(message);
-  if (currentLayout == 1 || currentLayout == 2) return;
+  if (currentLayout == 1 || currentLayout == 2)
+    return;
 
   // Clear the area inside the borders
   dma_display->fillRect(1, 23, 62, 8, 0);
 
-  dma_display->setTextSize(1); // size 1 == 8 pixels high
-  dma_display->setTextWrap(
-      false); // Don't wrap at end of line - will do ourselves
+  // size 1 == 8 pixels high
+  dma_display->setTextSize(1);
+  // Don't wrap at end of line - will do ourselves
+  dma_display->setTextWrap(false);
 
   dma_display->setFont(&TomThumb);
-  dma_display->setCursor(
-      1, 23 + 6); // Baseline at Y=29, keeping it off the bottom border
+  // Baseline at Y=29, keeping it off the bottom border
+  dma_display->setCursor(1, 23 + 6);
 
   dma_display->setTextColor(hexToRGB565(log_msg_color));
   dma_display->print(message);
@@ -72,18 +71,20 @@ void logStatusMessage(const char *message) {
 
 void logStatusMessage(String message) {
   Serial.println(message);
-  if (currentLayout == 1 || currentLayout == 2) return;
+  if (currentLayout == 1 || currentLayout == 2)
+    return;
 
   // Clear the area inside the borders
   dma_display->fillRect(1, 23, 62, 8, 0);
 
-  dma_display->setTextSize(1); // size 1 == 8 pixels high
-  dma_display->setTextWrap(
-      false); // Don't wrap at end of line - will do ourselves
+  // size 1 == 8 pixels high
+  dma_display->setTextSize(1);
+  // Don't wrap at end of line - will do ourselves
+  dma_display->setTextWrap(false);
 
   dma_display->setFont(&TomThumb);
-  dma_display->setCursor(
-      1, 23 + 6); // Baseline at Y=29, keeping it off the bottom border
+  // Baseline at Y=29, keeping it off the bottom border
+  dma_display->setCursor(1, 23 + 6);
 
   dma_display->setTextColor(hexToRGB565(log_msg_color));
   dma_display->print(message);
@@ -103,14 +104,16 @@ void clearStatusMessage() {
 extern uint8_t rainbowWheelval;
 
 void drawScrollingInfo() {
-  if (logMessageActive || currentLayout == 1 || currentLayout == 2) return;
+  if (logMessageActive || currentLayout == 1 || currentLayout == 2)
+    return;
 
   static int scrollX = 64;
   static String infoString = "";
   static int16_t textWidth = 0;
 
   if (infoString == "") {
-    infoString = "IP: " + WiFi.localIP().toString() + " | Host: " + WiFi.getHostname();
+    infoString =
+        "IP: " + WiFi.localIP().toString() + " | Host: " + WiFi.getHostname();
 
     int16_t x1, y1;
     uint16_t w, h;
@@ -130,7 +133,8 @@ void drawScrollingInfo() {
   dma_display->print(infoString);
   dma_display->setFont(NULL);
 
-  // Redraw the left and right border pixels for this row to mask the scrolling text
+  // Redraw the left and right border pixels for this row to mask the scrolling
+  // text
   for (int y = 23; y <= 30; y++) {
     dma_display->drawPixel(0, y, colorWheel((rainbowWheelval + y) & 255));
     dma_display->drawPixel(63, y, colorWheel((rainbowWheelval + y) & 255));
@@ -138,8 +142,10 @@ void drawScrollingInfo() {
 
   scrollX--;
   if (scrollX < -textWidth) {
-    scrollX = 64; // Reset to right edge
-    infoString = ""; // Refresh info in case IP changed
+    // Reset to right edge
+    scrollX = 64;
+    // Refresh info in case IP changed
+    infoString = "";
   }
 }
 
@@ -151,7 +157,8 @@ void drawTempHumi(int x, int y, int w, int h, uint16_t color, float temp,
   dma_display->setTextColor(color);
 
   dma_display->setFont(&TomThumb);
-  dma_display->setCursor(x, y + 6); // TomThumb baseline is around Y+6
+  // TomThumb baseline is around Y+6
+  dma_display->setCursor(x, y + 6);
 
   dma_display->printf("%4.1f", temp);
 
@@ -163,47 +170,51 @@ void drawTempHumi(int x, int y, int w, int h, uint16_t color, float temp,
   dma_display->setCursor(deg_x + 3, y + 6);
   dma_display->printf("C %d%%", humi);
 
-  dma_display->setFont(NULL); // Reset to standard font
+  // Reset to standard font
+  dma_display->setFont(NULL);
 }
 
 void draw_hPa(int x, int y, uint16_t color) {
   // 'h' (4px tall)
   dma_display->drawPixel(x, y, color);
-  dma_display->drawPixel(x, y+1, color);
-  dma_display->drawPixel(x, y+2, color);
-  dma_display->drawPixel(x+1, y+2, color);
-  dma_display->drawPixel(x, y+3, color);
-  dma_display->drawPixel(x+2, y+3, color);
+  dma_display->drawPixel(x, y + 1, color);
+  dma_display->drawPixel(x, y + 2, color);
+  dma_display->drawPixel(x + 1, y + 2, color);
+  dma_display->drawPixel(x, y + 3, color);
+  dma_display->drawPixel(x + 2, y + 3, color);
 
   // 'P' (4px tall)
-  y += 5; // y = 7
+  // y = 7
+  y += 5;
   dma_display->drawPixel(x, y, color);
-  dma_display->drawPixel(x+1, y, color);
-  dma_display->drawPixel(x, y+1, color);
-  dma_display->drawPixel(x+2, y+1, color);
-  dma_display->drawPixel(x, y+2, color);
-  dma_display->drawPixel(x+1, y+2, color);
-  dma_display->drawPixel(x, y+3, color);
+  dma_display->drawPixel(x + 1, y, color);
+  dma_display->drawPixel(x, y + 1, color);
+  dma_display->drawPixel(x + 2, y + 1, color);
+  dma_display->drawPixel(x, y + 2, color);
+  dma_display->drawPixel(x + 1, y + 2, color);
+  dma_display->drawPixel(x, y + 3, color);
 
   // 'a' (3px tall)
-  y += 5; // y = 12
-  dma_display->drawPixel(x+1, y, color);
-  dma_display->drawPixel(x+2, y, color);
-  dma_display->drawPixel(x, y+1, color);
-  dma_display->drawPixel(x+2, y+1, color);
-  dma_display->drawPixel(x+1, y+2, color);
-  dma_display->drawPixel(x+2, y+2, color);
+  // y = 12
+  y += 5;
+  dma_display->drawPixel(x + 1, y, color);
+  dma_display->drawPixel(x + 2, y, color);
+  dma_display->drawPixel(x, y + 1, color);
+  dma_display->drawPixel(x + 2, y + 1, color);
+  dma_display->drawPixel(x + 1, y + 2, color);
+  dma_display->drawPixel(x + 2, y + 2, color);
 }
 
 void drawWeatherIcon(int x, int y, int pressure) {
   if (pressure > 1020) {
     // Sun
-    uint16_t sunColor = dma_display->color565(255, 255, 0); // Yellow
+    // Yellow
+    uint16_t sunColor = dma_display->color565(255, 255, 0);
     dma_display->fillRect(x + 3, y + 1, 3, 3, sunColor);
-    dma_display->drawPixel(x + 4, y, sunColor); 
-    dma_display->drawPixel(x + 4, y + 4, sunColor); 
-    dma_display->drawPixel(x + 2, y + 2, sunColor); 
-    dma_display->drawPixel(x + 6, y + 2, sunColor); 
+    dma_display->drawPixel(x + 4, y, sunColor);
+    dma_display->drawPixel(x + 4, y + 4, sunColor);
+    dma_display->drawPixel(x + 2, y + 2, sunColor);
+    dma_display->drawPixel(x + 6, y + 2, sunColor);
     dma_display->drawPixel(x + 1, y, sunColor);
     dma_display->drawPixel(x + 7, y, sunColor);
     dma_display->drawPixel(x + 1, y + 4, sunColor);
@@ -215,7 +226,7 @@ void drawWeatherIcon(int x, int y, int pressure) {
     dma_display->drawFastHLine(x + 1, y + 1, 7, cloudColor);
     dma_display->drawFastHLine(x, y + 2, 9, cloudColor);
     dma_display->drawFastHLine(x, y + 3, 9, cloudColor);
-    
+
     // Rain
     if (pressure < 1005) {
       uint16_t rainColor = dma_display->color565(0, 100, 255);
@@ -230,46 +241,50 @@ void drawWeatherIcon(int x, int y, int pressure) {
 }
 
 void drawTempHumiStacked(int x, int w, uint16_t color, float temp, int humi) {
-  dma_display->fillRect(x, 1, w, 14, 0); // Clear column (Y=1 to 14)
+  // Clear column (Y=1 to 14)
+  dma_display->fillRect(x, 1, w, 14, 0);
   dma_display->setTextSize(1);
   dma_display->setTextWrap(false);
   dma_display->setTextColor(color);
   dma_display->setFont(&TomThumb);
-  
+
   // Temperature
   dma_display->setCursor(x, L1_TEMP_Y);
-  
+
   float displayTemp = temp;
   bool isNegative = (temp < 0);
   if (isNegative) {
-      displayTemp = -temp;
+    displayTemp = -temp;
   }
-  
+
   // Print absolute value without padding to save space
   dma_display->printf("%.1f", displayTemp);
-  
+
   // If negative, draw a tiny minus sign above the first digit
   if (isNegative) {
-      // Draw a 3-pixel horizontal line above the first digit
-      dma_display->drawFastHLine(x, L1_TEMP_Y - 6, 3, color);
+    // Draw a 3-pixel horizontal line above the first digit
+    dma_display->drawFastHLine(x, L1_TEMP_Y - 6, 3, color);
   }
-  
+
   int deg_x = dma_display->getCursorX();
-  dma_display->fillRect(deg_x, L1_TEMP_Y - 5, 2, 2, color); // Degree symbol
+  // Degree symbol
+  dma_display->fillRect(deg_x, L1_TEMP_Y - 5, 2, 2, color);
   dma_display->setCursor(deg_x + 3, L1_TEMP_Y);
   dma_display->print("C");
-  
+
   // Humidity
   char humiStr[8];
   sprintf(humiStr, "%d%%", humi);
   int humiLen = strlen(humiStr);
-  int humiWidth = humiLen * 4; // TomThumb is 3px + 1px spacing
+  // TomThumb is 3px + 1px spacing
+  int humiWidth = humiLen * 4;
   int humiOffset = (w - humiWidth) / 2;
-  if (humiOffset < 0) humiOffset = 0;
-  
+  if (humiOffset < 0)
+    humiOffset = 0;
+
   dma_display->setCursor(x + humiOffset, L1_HUMI_Y);
   dma_display->print(humiStr);
-  
+
   dma_display->setFont(NULL);
 }
 
@@ -277,18 +292,24 @@ void displayAmbientalData() {
   if (currentLayout == 0) {
     if (active_sensor > 0) {
       drawTempHumi(L2_SENSOR_DATA_X, L2_SENSOR_DATA_Y, SENSOR_AMB_DATA_WIDTH,
-                   SENSOR_AMB_DATA_HEIGHT, hexToRGB565(l2_amb_color), sensorAmbTemp,
-                   sensorAmbHumi);
+                   SENSOR_AMB_DATA_HEIGHT, hexToRGB565(l2_amb_color),
+                   sensorAmbTemp, sensorAmbHumi);
     } else {
-      dma_display->fillRect(L2_SENSOR_DATA_X, L2_SENSOR_DATA_Y, SENSOR_AMB_DATA_WIDTH, SENSOR_AMB_DATA_HEIGHT, 0);
+      dma_display->fillRect(L2_SENSOR_DATA_X, L2_SENSOR_DATA_Y,
+                            SENSOR_AMB_DATA_WIDTH, SENSOR_AMB_DATA_HEIGHT, 0);
     }
   } else {
     // Draw layout 1 yellow separators
-    dma_display->drawFastVLine(L1_PART2_X - 1, 1, 14, hexToRGB565(l1_line_color)); // Line 1
-    dma_display->drawFastVLine(L1_PART3_X - 1, 1, 14, hexToRGB565(l1_line_color)); // Line 2
-    
+    // Line 1
+    dma_display->drawFastVLine(L1_PART2_X - 1, 1, 14,
+                               hexToRGB565(l1_line_color));
+    // Line 2
+    dma_display->drawFastVLine(L1_PART3_X - 1, 1, 14,
+                               hexToRGB565(l1_line_color));
+
     if (active_sensor > 0) {
-      drawTempHumiStacked(L1_PART1_X, L1_PART_WIDTH, hexToRGB565(l1_amb_color), sensorAmbTemp, sensorAmbHumi);
+      drawTempHumiStacked(L1_PART1_X, L1_PART_WIDTH, hexToRGB565(l1_amb_color),
+                          sensorAmbTemp, sensorAmbHumi);
     } else {
       dma_display->fillRect(L1_PART1_X, 1, L1_PART_WIDTH, 14, 0);
       dma_display->setTextSize(1);
@@ -304,7 +325,8 @@ void displayAmbientalData() {
 void displaySensorData() {
   if (currentLayout == 0) {
     if (sensorDead) {
-      dma_display->fillRect(L2_SENSOR_DATA_X, L2_SENSOR_DATA_Y, SENSOR_DATA_WIDTH, SENSOR_DATA_HEIGHT, 0);
+      dma_display->fillRect(L2_SENSOR_DATA_X, L2_SENSOR_DATA_Y,
+                            SENSOR_DATA_WIDTH, SENSOR_DATA_HEIGHT, 0);
       dma_display->setTextSize(1);
       dma_display->setTextWrap(false);
       dma_display->setTextColor(SENSOR_ERROR_DATA_COLOR);
@@ -314,7 +336,8 @@ void displaySensorData() {
       dma_display->setFont(NULL);
     } else {
       drawTempHumi(L2_SENSOR_DATA_X, L2_SENSOR_DATA_Y, SENSOR_DATA_WIDTH,
-                   SENSOR_DATA_HEIGHT, hexToRGB565(l2_out_color), sensorTemp, sensorHumi);
+                   SENSOR_DATA_HEIGHT, hexToRGB565(l2_out_color), sensorTemp,
+                   sensorHumi);
     }
   } else {
     if (sensorDead) {
@@ -327,24 +350,27 @@ void displaySensorData() {
       dma_display->print("No data!");
       dma_display->setFont(NULL);
     } else {
-      drawTempHumiStacked(L1_PART3_X, L1_PART_WIDTH, hexToRGB565(l1_out_color), sensorTemp, sensorHumi);
+      drawTempHumiStacked(L1_PART3_X, L1_PART_WIDTH, hexToRGB565(l1_out_color),
+                          sensorTemp, sensorHumi);
     }
-    
+
     // Draw Pressure in Part 2
     dma_display->fillRect(L1_PART2_X, 1, L1_PART_WIDTH, 14, 0);
     if (active_sensor > 0) {
       drawWeatherIcon(L1_PART2_X + 5, 1, sensorMSLP);
 
-      uint16_t pressureColor = (active_sensor == SENSOR_TYPE_BME280) ? hexToRGB565(l1_amb_color) : hexToRGB565(l1_out_color);
+      uint16_t pressureColor = (active_sensor == SENSOR_TYPE_BME280)
+                                   ? hexToRGB565(l1_amb_color)
+                                   : hexToRGB565(l1_out_color);
       dma_display->setTextSize(1);
       dma_display->setTextWrap(false);
       dma_display->setTextColor(pressureColor);
       dma_display->setFont(&TomThumb);
       dma_display->setCursor(L1_PART2_X + 1, L1_HUMI_Y);
       if (sensorPressure > 9999) {
-          dma_display->printf("%d", 9999);
+        dma_display->printf("%d", 9999);
       } else {
-          dma_display->printf("%d", sensorPressure);
+        dma_display->printf("%d", sensorPressure);
       }
       dma_display->setFont(NULL);
       draw_hPa(L1_PART2_X + 16, 2, pressureColor);
@@ -397,15 +423,16 @@ void drawRainbowBorder(uint8_t start_hue) {
 }
 
 static uint32_t heart_8x8[64] = {
-    0x000000, 0xFF0000, 0xFF0000, 0x000000, 0xFF0000, 0xFF0000, 0x000000, 0x000000,
-    0xFF0000, 0xFF0000, 0xFF0000, 0xFF0000, 0xFF0000, 0xFF0000, 0xFF0000, 0x000000,
-    0xFF0000, 0xFF0000, 0xFF0000, 0xFF0000, 0xFF0000, 0xFF0000, 0xFF0000, 0x000000,
-    0xFF0000, 0xFF0000, 0xFF0000, 0xFF0000, 0xFF0000, 0xFF0000, 0xFF0000, 0x000000,
-    0x000000, 0xFF0000, 0xFF0000, 0xFF0000, 0xFF0000, 0xFF0000, 0x000000, 0x000000,
-    0x000000, 0x000000, 0xFF0000, 0xFF0000, 0xFF0000, 0x000000, 0x000000, 0x000000,
-    0x000000, 0x000000, 0x000000, 0xFF0000, 0x000000, 0x000000, 0x000000, 0x000000,
-    0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000
-};
+    0x000000, 0xFF0000, 0xFF0000, 0x000000, 0xFF0000, 0xFF0000, 0x000000,
+    0x000000, 0xFF0000, 0xFF0000, 0xFF0000, 0xFF0000, 0xFF0000, 0xFF0000,
+    0xFF0000, 0x000000, 0xFF0000, 0xFF0000, 0xFF0000, 0xFF0000, 0xFF0000,
+    0xFF0000, 0xFF0000, 0x000000, 0xFF0000, 0xFF0000, 0xFF0000, 0xFF0000,
+    0xFF0000, 0xFF0000, 0xFF0000, 0x000000, 0x000000, 0xFF0000, 0xFF0000,
+    0xFF0000, 0xFF0000, 0xFF0000, 0x000000, 0x000000, 0x000000, 0x000000,
+    0xFF0000, 0xFF0000, 0xFF0000, 0x000000, 0x000000, 0x000000, 0x000000,
+    0x000000, 0x000000, 0xFF0000, 0x000000, 0x000000, 0x000000, 0x000000,
+    0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000,
+    0x000000};
 
 static uint16_t color565(uint32_t rgb) {
   return (((rgb >> 16) & 0xF8) << 8) | (((rgb >> 8) & 0xFC) << 3) |
@@ -425,7 +452,8 @@ static void drawBitmap(int startx, int starty, int width, int height,
 }
 
 void drawHeartBeat() {
-  if (currentLayout == 1 || currentLayout == 2) return;
+  if (currentLayout == 1 || currentLayout == 2)
+    return;
 
   static uint8_t hue = 0;
   static uint8_t tick = 0;
@@ -438,7 +466,7 @@ void drawHeartBeat() {
 
   // Fade through all rainbow colors
   uint16_t heartColor = colorWheel(hue);
-  
+
   int hbX = (currentLayout == 0) ? L2_HEARTBEAT_X : L1_HEARTBEAT_X;
   int hbY = (currentLayout == 0) ? L2_HEARTBEAT_Y : L1_HEARTBEAT_Y;
 
@@ -448,8 +476,8 @@ void drawHeartBeat() {
       if (heart_8x8[counter] != 0) {
         dma_display->drawPixel(hbX + xx, hbY + yy, heartColor);
       } else {
-        dma_display->drawPixel(hbX + xx, hbY + yy,
-                               0); // Black background
+        // Black background
+        dma_display->drawPixel(hbX + xx, hbY + yy, 0);
       }
       counter++;
     }
