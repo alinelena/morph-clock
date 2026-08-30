@@ -9,13 +9,9 @@
 #define SENSOR_TYPE_AHT20 1
 #define SENSOR_TYPE_BME280 2
 
-// Select which environmental sensor is physically connected
-// (Now managed dynamically via web settings)
-
 // Sensor Altitude (in meters) for Mean Sea Level Pressure (MSLP) correction
 // Warrington UK is ~32m above sea level. First floor adds ~3m.
 // Set this to 32 if you move the clock to the ground floor.
-// #define ALTITUDE_METERS 35
 
 // I2C Pins (BME280 has SDA/SCL swapped compared to AHT20)
 #define AHT20_SDA_PIN 22
@@ -24,16 +20,9 @@
 #define BME280_SDA_PIN 21
 #define BME280_SCL_PIN 22
 
-// #define USE_ANDROID_AP 1
-
 // How often we refresh the time from the NTP server
 #define NTP_REFRESH_INTERVAL_SEC 3600
 #define NTP_SERVER "time.google.com"
-
-// Timezone difference from GMT, expressed in seconds
-// #define TIMEZONE_DELTA_SEC 0
-// DST delta to apply
-// #define TIMEZONE_DST_SEC 3600
 
 // How long are informational messages kept on screen
 #define LOG_MESSAGE_PERSISTENCE_MSEC 30000
@@ -44,6 +33,12 @@
 
 // Button pin
 #define TOUCH_BUTTON_PIN 32
+
+// Photoresistor (LDR) pin
+#define LDR_PIN 35
+
+// I2C Interrupt (IRQ) pin
+#define IRQ_PIN 34
 
 // Hostname for the device
 #define HOSTNAME "rubicante"
@@ -95,19 +90,12 @@
 #define COUNTDOWN_CLOCK_SEGMENT_HEIGHT 10
 #define COUNTDOWN_CLOCK_SEGMENT_WIDTH 4
 #define COUNTDOWN_CLOCK_SEGMENT_SPACING 2
-// #define COUNTDOWN_COLOR_GREEN  ((0x00 & 0xF8) << 8) | ((0xFF & 0xFC) << 3) |
-// (0x00 >> 3) #define COUNTDOWN_COLOR_YELLOW ((0xFF & 0xF8) << 8) | ((0xFF &
-// 0xFC) << 3) | (0x00 >> 3) #define COUNTDOWN_COLOR_RED    ((0xFF & 0xF8) << 8)
-// | ((0x00 & 0xFC) << 3) | (0x00 >> 3)
 
 // Sensor data layout config
 #define L2_SENSOR_DATA_X 1
 #define L2_SENSOR_DATA_Y 16
-// #define L1_SENSOR_DATA_X 1
-// #define L1_SENSOR_DATA_Y 1
 
 // Colors and shared settings
-// color565 == ((red & 0xF8) << 8) | ((green & 0xFC) << 3) | (blue >> 3)
 #define CLOCK_ANIMATION_DELAY_MSEC 50
 // Colors managed via Web UI
 
@@ -120,18 +108,7 @@
 // Ambiental sensor data
 #define SENSOR_AMB_DATA_WIDTH 40
 #define SENSOR_AMB_DATA_HEIGHT 8
-// #define SENSOR_AMB_ERROR_DATA_COLOR \
-//   ((0xFF & 0xF8) << 8) | ((0x00 & 0xFC) << 3) | (0x00 >> 3)
 #define AMB_REFRESH_INTERVAL_SEC 30
-
-// Log messages at the bottom
-
-// #define BITMAP_X 100
-// #define BITMAP_Y 100
-
-// Heartbeat
-// #define HEARTBEAT_X 55
-// #define HEARTBEAT_Y 1
 
 // Watchdog settings
 #define WDT_TIMEOUT 60

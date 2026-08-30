@@ -3,6 +3,7 @@
 #include "settings.h"
 // Fallbacks
 #include "creds_mqtt.h"
+#include "rgb_display.h"
 
 String wifi_ssid;
 String wifi_password;
@@ -40,6 +41,35 @@ int active_sensor = 2;
 int display_brightness = 128;
 String timezone_str = "GMT0BST,M3.5.0/1,M10.5.0";
 int altitude_meters = 35;
+String ntp_server = NTP_SERVER;
+int ntp_refresh_interval = NTP_REFRESH_INTERVAL_SEC;
+String hostname = HOSTNAME;
+int amb_refresh_interval = AMB_REFRESH_INTERVAL_SEC;
+int sensor_dead_interval = SENSOR_DEAD_INTERVAL_SEC;
+
+int pin_r1 = R1_PIN;
+int pin_g1 = G1_PIN;
+int pin_b1 = B1_PIN;
+int pin_r2 = R2_PIN;
+int pin_g2 = G2_PIN;
+int pin_b2 = B2_PIN;
+int pin_a = A_PIN;
+int pin_b = B_PIN;
+int pin_c = C_PIN;
+int pin_d = D_PIN;
+int pin_e = E_PIN;
+int pin_ldr = LDR_PIN;
+int pin_irq = IRQ_PIN;
+int pin_lat = LAT_PIN;
+int pin_oe = OE_PIN;
+int pin_clk = CLK_PIN;
+
+int pin_touch_button = TOUCH_BUTTON_PIN;
+
+int pin_aht20_sda = AHT20_SDA_PIN;
+int pin_aht20_scl = AHT20_SCL_PIN;
+int pin_bme280_sda = BME280_SDA_PIN;
+int pin_bme280_scl = BME280_SCL_PIN;
 
 void loadSettings() {
   Preferences preferences;
@@ -92,7 +122,36 @@ void loadSettings() {
   display_brightness = preferences.getInt("brightness", 128);
   // Default GMT/BST
   timezone_str = preferences.getString("tz", "GMT0BST,M3.5.0/1,M10.5.0");
+  ntp_server = preferences.getString("ntp_srv", NTP_SERVER);
+  ntp_refresh_interval = preferences.getInt("ntp_int", NTP_REFRESH_INTERVAL_SEC);
+  hostname = preferences.getString("hostname", HOSTNAME);
+  amb_refresh_interval = preferences.getInt("amb_int", AMB_REFRESH_INTERVAL_SEC);
+  sensor_dead_interval = preferences.getInt("dead_int", SENSOR_DEAD_INTERVAL_SEC);
   altitude_meters = preferences.getInt("altitude", 35);
+
+  pin_r1 = preferences.getInt("pin_r1", R1_PIN);
+  pin_g1 = preferences.getInt("pin_g1", G1_PIN);
+  pin_b1 = preferences.getInt("pin_b1", B1_PIN);
+  pin_r2 = preferences.getInt("pin_r2", R2_PIN);
+  pin_g2 = preferences.getInt("pin_g2", G2_PIN);
+  pin_b2 = preferences.getInt("pin_b2", B2_PIN);
+  pin_a = preferences.getInt("pin_a", A_PIN);
+  pin_b = preferences.getInt("pin_b", B_PIN);
+  pin_c = preferences.getInt("pin_c", C_PIN);
+  pin_d = preferences.getInt("pin_d", D_PIN);
+  pin_e = preferences.getInt("pin_e", E_PIN);
+  pin_ldr = preferences.getInt("pin_ldr", LDR_PIN);
+  pin_irq = preferences.getInt("pin_irq", IRQ_PIN);
+  pin_lat = preferences.getInt("pin_lat", LAT_PIN);
+  pin_oe = preferences.getInt("pin_oe", OE_PIN);
+  pin_clk = preferences.getInt("pin_clk", CLK_PIN);
+
+  pin_touch_button = preferences.getInt("pin_touch", TOUCH_BUTTON_PIN);
+
+  pin_aht20_sda = preferences.getInt("pin_aht_sda", AHT20_SDA_PIN);
+  pin_aht20_scl = preferences.getInt("pin_aht_scl", AHT20_SCL_PIN);
+  pin_bme280_sda = preferences.getInt("pin_bme_sda", BME280_SDA_PIN);
+  pin_bme280_scl = preferences.getInt("pin_bme_scl", BME280_SCL_PIN);
 
   preferences.end();
 }
@@ -136,7 +195,36 @@ void saveSettings() {
   preferences.putInt("act_sensor", active_sensor);
   preferences.putInt("brightness", display_brightness);
   preferences.putString("tz", timezone_str);
+  preferences.putString("ntp_srv", ntp_server);
+  preferences.putInt("ntp_int", ntp_refresh_interval);
+  preferences.putString("hostname", hostname);
+  preferences.putInt("amb_int", amb_refresh_interval);
+  preferences.putInt("dead_int", sensor_dead_interval);
   preferences.putInt("altitude", altitude_meters);
+
+  preferences.putInt("pin_r1", pin_r1);
+  preferences.putInt("pin_g1", pin_g1);
+  preferences.putInt("pin_b1", pin_b1);
+  preferences.putInt("pin_r2", pin_r2);
+  preferences.putInt("pin_g2", pin_g2);
+  preferences.putInt("pin_b2", pin_b2);
+  preferences.putInt("pin_a", pin_a);
+  preferences.putInt("pin_b", pin_b);
+  preferences.putInt("pin_c", pin_c);
+  preferences.putInt("pin_d", pin_d);
+  preferences.putInt("pin_e", pin_e);
+  preferences.putInt("pin_ldr", pin_ldr);
+  preferences.putInt("pin_irq", pin_irq);
+  preferences.putInt("pin_lat", pin_lat);
+  preferences.putInt("pin_oe", pin_oe);
+  preferences.putInt("pin_clk", pin_clk);
+
+  preferences.putInt("pin_touch", pin_touch_button);
+
+  preferences.putInt("pin_aht_sda", pin_aht20_sda);
+  preferences.putInt("pin_aht_scl", pin_aht20_scl);
+  preferences.putInt("pin_bme_sda", pin_bme280_sda);
+  preferences.putInt("pin_bme_scl", pin_bme280_scl);
 
   preferences.end();
 }

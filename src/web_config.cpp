@@ -52,7 +52,7 @@ const char *html_page PROGMEM = R"=====(
         }
         h1 { text-align: center; margin-bottom: 20px; background: linear-gradient(to right, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
-        .tabs { display: flex; border-bottom: 1px solid var(--glass-border); margin-bottom: 20px; }
+        .tabs { display: flex; flex-wrap: wrap; gap: 5px; border-bottom: 1px solid var(--glass-border); margin-bottom: 20px; }
         .tab { padding: 12px 20px; cursor: pointer; color: var(--text-muted); font-weight: 600; border-bottom: 2px solid transparent; transition: all 0.3s; }
         .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
         .tab-content { display: none; animation: fadeIn 0.4s ease; }
@@ -95,6 +95,7 @@ const char *html_page PROGMEM = R"=====(
             <div class="tab" onclick="switchTab('layout')">Layout Settings</div>
             <div class="tab" onclick="switchTab('timer')">Live Timer</div>
             <div class="tab" onclick="switchTab('update')">Firmware Update</div>
+            <div class="tab" onclick="switchTab('pins')">Hardware Pins</div>
             <div class="tab" onclick="switchTab('about')">About</div>
         </div>
         
@@ -103,6 +104,7 @@ const char *html_page PROGMEM = R"=====(
                 <div class="section-title">WiFi Credentials</div>
                 <div class="form-group"><label>SSID</label><input type="text" name="wifi_ssid" id="wifi_ssid"></div>
                 <div class="form-group"><label>Password</label><input type="password" name="wifi_pass" id="wifi_pass"></div>
+                <div class="form-group"><label>Hostname</label><input type="text" name="hostname" id="hostname"></div>
 
                 <div class="section-title">MQTT Settings</div>
                 <div class="form-group"><label>Server</label><input type="text" name="mqtt_server" id="mqtt_server"></div>
@@ -117,6 +119,10 @@ const char *html_page PROGMEM = R"=====(
                 <div class="form-group"><label>Pressure</label><input type="text" name="mqtt_pres" id="mqtt_pres"></div>
                 <div class="form-group"><label>Layout</label><input type="text" name="mqtt_layout" id="mqtt_layout"></div>
                 <div class="form-group"><label>Countdown</label><input type="text" name="mqtt_count" id="mqtt_count"></div>
+
+                <div class="section-title">NTP Settings</div>
+                <div class="form-group"><label>NTP Server</label><input type="text" name="ntp_srv" id="ntp_srv"></div>
+                <div class="form-group"><label>Refresh Interval (Seconds)</label><input type="number" name="ntp_int" id="ntp_int"></div>
             </div>
 
             <div id="layout" class="tab-content">
@@ -152,8 +158,14 @@ const char *html_page PROGMEM = R"=====(
                         <option value="NZST-12NZDT,M9.5.0,M4.1.0/3">NZST/NZDT (New Zealand)</option>
                     </select>
                 </div>
-                <div class="form-group"><label>Altitude (Meters)</label><input type="number" name="altitude" id="altitude"></div>
-                <div class="form-group"><label>Brightness (0-255)</label><input type="number" min="0" max="255" name="brightness" id="brightness"></div>
+                <div class="flex-row">
+                    <div class="form-group" style="flex:1"><label>Altitude (Meters)</label><input type="number" name="altitude" id="altitude"></div>
+                    <div class="form-group" style="flex:1"><label>Brightness (0-255)</label><input type="number" min="0" max="255" name="brightness" id="brightness"></div>
+                </div>
+                <div class="flex-row">
+                    <div class="form-group" style="flex:1"><label>Sensor Refresh (s)</label><input type="number" name="amb_int" id="amb_int"></div>
+                    <div class="form-group" style="flex:1"><label>Sensor Dead (s)</label><input type="number" name="dead_int" id="dead_int"></div>
+                </div>
 
                 <div class="section-title">Instant Layout Switch</div>
                 <div class="btn-group" style="margin-bottom: 25px;">
@@ -203,6 +215,49 @@ const char *html_page PROGMEM = R"=====(
                 </div>
             </div>
             
+            <div id="pins" class="tab-content">
+                <div class="section-title">Screen Pins (HUB75)</div>
+                <div class="flex-row">
+                    <div class="form-group" style="flex:1"><label>R1</label><input type="number" name="pin_r1" id="pin_r1"></div>
+                    <div class="form-group" style="flex:1"><label>G1</label><input type="number" name="pin_g1" id="pin_g1"></div>
+                    <div class="form-group" style="flex:1"><label>B1</label><input type="number" name="pin_b1" id="pin_b1"></div>
+                </div>
+                <div class="flex-row">
+                    <div class="form-group" style="flex:1"><label>R2</label><input type="number" name="pin_r2" id="pin_r2"></div>
+                    <div class="form-group" style="flex:1"><label>G2</label><input type="number" name="pin_g2" id="pin_g2"></div>
+                    <div class="form-group" style="flex:1"><label>B2</label><input type="number" name="pin_b2" id="pin_b2"></div>
+                </div>
+                <div class="flex-row">
+                    <div class="form-group" style="flex:1"><label>A</label><input type="number" name="pin_a" id="pin_a"></div>
+                    <div class="form-group" style="flex:1"><label>B</label><input type="number" name="pin_b" id="pin_b"></div>
+                    <div class="form-group" style="flex:1"><label>C</label><input type="number" name="pin_c" id="pin_c"></div>
+                    <div class="form-group" style="flex:1"><label>D</label><input type="number" name="pin_d" id="pin_d"></div>
+                    <div class="form-group" style="flex:1"><label>E (-1 = None)</label><input type="number" name="pin_e" id="pin_e"></div>
+                </div>
+                <div class="flex-row">
+                    <div class="form-group" style="flex:1"><label>LAT (STB)</label><input type="number" name="pin_lat" id="pin_lat"></div>
+                    <div class="form-group" style="flex:1"><label>OE</label><input type="number" name="pin_oe" id="pin_oe"></div>
+                    <div class="form-group" style="flex:1"><label>CLK</label><input type="number" name="pin_clk" id="pin_clk"></div>
+                </div>
+
+                <div class="section-title">Touch & LDR Pins</div>
+                <div class="flex-row">
+                    <div class="form-group" style="flex:1"><label>Touch Button</label><input type="number" name="pin_touch" id="pin_touch"></div>
+                    <div class="form-group" style="flex:1"><label>LDR (Photoresistor)</label><input type="number" name="pin_ldr" id="pin_ldr"></div>
+                </div>
+
+                <div class="section-title">I2C Pins</div>
+                <div class="flex-row">
+                    <div class="form-group" style="flex:1"><label>AHT20 SDA</label><input type="number" name="pin_aht_sda" id="pin_aht_sda"></div>
+                    <div class="form-group" style="flex:1"><label>AHT20 SCL</label><input type="number" name="pin_aht_scl" id="pin_aht_scl"></div>
+                </div>
+                <div class="flex-row">
+                    <div class="form-group" style="flex:1"><label>BME280 SDA</label><input type="number" name="pin_bme_sda" id="pin_bme_sda"></div>
+                    <div class="form-group" style="flex:1"><label>BME280 SCL</label><input type="number" name="pin_bme_scl" id="pin_bme_scl"></div>
+                </div>
+                <div class="form-group"><label>I2C Interrupt (IRQ)</label><input type="number" name="pin_irq" id="pin_irq"></div>
+            </div>
+
             <button type="submit" id="saveBtn">Save & Reboot</button>
         </form>
 
@@ -261,6 +316,13 @@ const char *html_page PROGMEM = R"=====(
                 &bull; ESP32httpUpdate v2.1.145<br>
                 &bull; Adafruit BME280 Library v2.3.0<br>
                 &bull; Adafruit AHTX0 v2.0.6
+            </div>
+
+            <div class="section-title">Hardware & Source Code</div>
+            <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+                <strong>Original Project:</strong> <a href="https://github.com/bogd/esp32-morphing-clock.git" target="_blank" style="color: var(--primary); text-decoration: none;">esp32-morphing-clock</a><br>
+                <strong>Matrix Shield v1.9:</strong> <a href="https://github.com/hallard/WeMos-Matrix-Shield-DMA" target="_blank" style="color: var(--primary); text-decoration: none;">WeMos-Matrix-Shield-DMA</a><br>
+                <strong>Hardware Note:</strong> Designed for HUB75 P4 64x32 LED Matrix
             </div>
 
             <div class="section-title">License</div>
@@ -361,9 +423,35 @@ void handleGetSettings() {
   json += "\"brightness\":\"" + String(display_brightness) + "\",";
   json += "\"altitude\":\"" + String(altitude_meters) + "\",";
   json += "\"tz\":\"" + timezone_str + "\",";
+  json += "\"ntp_srv\":\"" + ntp_server + "\",";
+  json += "\"ntp_int\":\"" + String(ntp_refresh_interval) + "\",";
+  json += "\"hostname\":\"" + hostname + "\",";
+  json += "\"amb_int\":\"" + String(amb_refresh_interval) + "\",";
+  json += "\"dead_int\":\"" + String(sensor_dead_interval) + "\",";
   json += "\"l3_def_cnt\":\"" + String(l3_default_countdown) + "\",";
   json += "\"def_layout\":\"" + String(default_layout) + "\",";
   json += "\"act_sensor\":\"" + String(active_sensor) + "\",";
+  json += "\"pin_r1\":\"" + String(pin_r1) + "\",";
+  json += "\"pin_g1\":\"" + String(pin_g1) + "\",";
+  json += "\"pin_b1\":\"" + String(pin_b1) + "\",";
+  json += "\"pin_r2\":\"" + String(pin_r2) + "\",";
+  json += "\"pin_g2\":\"" + String(pin_g2) + "\",";
+  json += "\"pin_b2\":\"" + String(pin_b2) + "\",";
+  json += "\"pin_a\":\"" + String(pin_a) + "\",";
+  json += "\"pin_b\":\"" + String(pin_b) + "\",";
+  json += "\"pin_c\":\"" + String(pin_c) + "\",";
+  json += "\"pin_d\":\"" + String(pin_d) + "\",";
+  json += "\"pin_e\":\"" + String(pin_e) + "\",";
+  json += "\"pin_lat\":\"" + String(pin_lat) + "\",";
+  json += "\"pin_oe\":\"" + String(pin_oe) + "\",";
+  json += "\"pin_clk\":\"" + String(pin_clk) + "\",";
+  json += "\"pin_touch\":\"" + String(pin_touch_button) + "\",";
+  json += "\"pin_ldr\":\"" + String(pin_ldr) + "\",";
+  json += "\"pin_aht_sda\":\"" + String(pin_aht20_sda) + "\",";
+  json += "\"pin_aht_scl\":\"" + String(pin_aht20_scl) + "\",";
+  json += "\"pin_bme_sda\":\"" + String(pin_bme280_sda) + "\",";
+  json += "\"pin_bme_scl\":\"" + String(pin_bme280_scl) + "\",";
+  json += "\"pin_irq\":\"" + String(pin_irq) + "\",";
   json += "\"version\":\"" + String(FIRMWARE_VERSION) + "\",";
   json += "\"build\":\"" + String(__DATE__) + " " + String(__TIME__) + "\",";
   json += "\"heap\":\"" + String(ESP.getFreeHeap()) + "\",";
@@ -462,8 +550,43 @@ void handleSave() {
   display_brightness = doc["brightness"].as<int>();
   altitude_meters = doc["altitude"].as<int>();
   timezone_str = doc["tz"].as<String>();
+  ntp_server = doc["ntp_srv"].as<String>();
+  ntp_refresh_interval = doc["ntp_int"].as<int>();
+  hostname = doc["hostname"].as<String>();
+  amb_refresh_interval = doc["amb_int"].as<int>();
+  sensor_dead_interval = doc["dead_int"].as<int>();
   default_layout = doc["def_layout"].as<int>();
   active_sensor = doc["act_sensor"].as<int>();
+  pin_r1 = doc["pin_r1"].as<int>();
+  pin_g1 = doc["pin_g1"].as<int>();
+  pin_b1 = doc["pin_b1"].as<int>();
+  pin_r2 = doc["pin_r2"].as<int>();
+  pin_g2 = doc["pin_g2"].as<int>();
+  pin_b2 = doc["pin_b2"].as<int>();
+  pin_a = doc["pin_a"].as<int>();
+  pin_b = doc["pin_b"].as<int>();
+  pin_c = doc["pin_c"].as<int>();
+  pin_d = doc["pin_d"].as<int>();
+  pin_e = doc["pin_e"].as<int>();
+  pin_lat = doc["pin_lat"].as<int>();
+  pin_oe = doc["pin_oe"].as<int>();
+  if (doc.containsKey("pin_clk"))
+    pin_clk = doc["pin_clk"].as<int>();
+  if (doc.containsKey("pin_touch"))
+    pin_touch_button = doc["pin_touch"].as<int>();
+  if (doc.containsKey("pin_ldr"))
+    pin_ldr = doc["pin_ldr"].as<int>();
+  if (doc.containsKey("pin_aht_sda"))
+    pin_aht20_sda = doc["pin_aht_sda"].as<int>();
+  if (doc.containsKey("pin_aht_scl"))
+    pin_aht20_scl = doc["pin_aht_scl"].as<int>();
+  if (doc.containsKey("pin_bme_sda"))
+    pin_bme280_sda = doc["pin_bme_sda"].as<int>();
+  if (doc.containsKey("pin_bme_scl"))
+    pin_bme280_scl = doc["pin_bme_scl"].as<int>();
+  if (doc.containsKey("pin_irq"))
+    pin_irq = doc["pin_irq"].as<int>();
+
 
   saveSettings();
   webServer.send(200, "application/json", "{\"status\":\"ok\"}");

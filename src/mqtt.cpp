@@ -76,7 +76,7 @@ void reconnect() {
 
     client.setServer(mqtt_server.c_str(), mqtt_port);
     // Attempt to connect (clientId, username, password)
-    if (client.connect(HOSTNAME, mqtt_username.c_str(),
+    if (client.connect(hostname.c_str(), mqtt_username.c_str(),
                        mqtt_password.c_str())) {
       Serial.println("[DONE]");
       Serial.println("Subscribing to topics:");

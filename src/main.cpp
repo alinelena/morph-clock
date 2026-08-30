@@ -57,7 +57,7 @@ void setup() {
   Serial.print("Connecting to ");
   Serial.println(wifi_ssid);
   WiFi.mode(WIFI_STA);
-  WiFi.setHostname(HOSTNAME);
+  WiFi.setHostname(hostname.c_str());
   WiFi.begin(wifi_ssid.c_str(), wifi_password.c_str());
 
   unsigned long startAttemptTime = millis();
@@ -126,10 +126,11 @@ void setup() {
     logStatusMessage(buf);
   });
   ArduinoOTA.onError([](ota_error_t error) { logStatusMessage("OTA Error!"); });
+  ArduinoOTA.setHostname(hostname.c_str());
   ArduinoOTA.begin();
 
   logStatusMessage("NTP time...");
-  configTzTime(timezone_str.c_str(), NTP_SERVER);
+  configTzTime(timezone_str.c_str(), ntp_server.c_str());
   lastNTPUpdate = millis();
   logStatusMessage("NTP done!");
 
@@ -193,14 +194,14 @@ void loop() {
   client.loop();
 
   // Periodically refresh NTP time
-  if (millis() - lastNTPUpdate > 1000 * NTP_REFRESH_INTERVAL_SEC) {
+  if (millis() - lastNTPUpdate > 1000 * ntp_refresh_interval) {
     logStatusMessage("NTP Refresh");
-    configTzTime(timezone_str.c_str(), NTP_SERVER);
+    configTzTime(timezone_str.c_str(), ntp_server.c_str());
     lastNTPUpdate = millis();
   }
 
-  // Ambient data fetch every 30s
-  if (millis() - lastAmbUpdate > 1000 * AMB_REFRESH_INTERVAL_SEC) {
+  // Ambient data fetch every amb_refresh_interval seconds
+  if (millis() - lastAmbUpdate > 1000 * amb_refresh_interval) {
     getAmbientalData();
     lastAmbUpdate = millis();
   }
@@ -209,7 +210,7 @@ void loop() {
   static bool buttonPressed = false;
   static unsigned long lastButtonPress = 0;
 
-  int touchVal = touchRead(TOUCH_BUTTON_PIN);
+  int touchVal = touchRead(pin_touch_button);
 
   if (touchVal < 600) {
     if (!buttonPressed && (millis() - lastButtonPress > 500)) {
@@ -233,7 +234,7 @@ void loop() {
   }
 
   // Is the sensor data too old?
-  if (millis() - lastSensorRead > 1000 * SENSOR_DEAD_INTERVAL_SEC) {
+  if (millis() - lastSensorRead > 1000 * sensor_dead_interval) {
     sensorDead = true;
   }
 

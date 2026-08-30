@@ -14,12 +14,12 @@ Adafruit_AHTX0 aht;
 
 void env_sensor_init() {
   if (active_sensor == SENSOR_TYPE_BME280) {
-    Wire.begin(BME280_SDA_PIN, BME280_SCL_PIN);
+    Wire.begin(pin_bme280_sda, pin_bme280_scl);
     if (!bme.begin(0x76)) {
       Serial.println("BME280 Sensor NOT found! Check wiring.");
     }
   } else if (active_sensor == SENSOR_TYPE_AHT20) {
-    Wire.begin(AHT20_SDA_PIN, AHT20_SCL_PIN);
+    Wire.begin(pin_aht20_sda, pin_aht20_scl);
     if (!aht.begin()) {
       Serial.println("AHT20 Sensor NOT found! Check wiring.");
     }

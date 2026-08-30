@@ -40,7 +40,36 @@ extern int default_layout;
 extern int active_sensor;
 extern int display_brightness;
 extern String timezone_str;
+extern String ntp_server;
+extern int ntp_refresh_interval;
+extern String hostname;
 extern int altitude_meters;
+extern int amb_refresh_interval;
+extern int sensor_dead_interval;
+
+extern int pin_r1;
+extern int pin_g1;
+extern int pin_b1;
+extern int pin_r2;
+extern int pin_g2;
+extern int pin_b2;
+extern int pin_a;
+extern int pin_b;
+extern int pin_c;
+extern int pin_d;
+extern int pin_e;
+extern int pin_ldr;
+extern int pin_irq;
+extern int pin_lat;
+extern int pin_oe;
+extern int pin_clk;
+
+extern int pin_touch_button;
+
+extern int pin_aht20_sda;
+extern int pin_aht20_scl;
+extern int pin_bme280_sda;
+extern int pin_bme280_scl;
 
 void loadSettings();
 void saveSettings();

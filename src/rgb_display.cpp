@@ -27,13 +27,13 @@ uint16_t colorWheel(uint8_t pos) {
 }
 
 void display_init() {
-  HUB75_I2S_CFG::i2s_pins _pins = {R1_PIN, G1_PIN,  B1_PIN, R2_PIN, G2_PIN,
-                                   B2_PIN, A_PIN,   B_PIN,  C_PIN,  D_PIN,
-                                   E_PIN,  LAT_PIN, OE_PIN, CLK_PIN};
+  HUB75_I2S_CFG::i2s_pins _pins = {pin_r1, pin_g1, pin_b1, pin_r2, pin_g2,
+                                   pin_b2, pin_a,  pin_b,  pin_c,  pin_d,
+                                   pin_e,  pin_lat, pin_oe, pin_clk};
 
   // Module width, Module height, chain length, pin mapping
   HUB75_I2S_CFG mxconfig(PANEL_WIDTH, PANEL_HEIGHT, 1, _pins);
-  mxconfig.gpio.e = E_PIN;
+  mxconfig.gpio.e = pin_e;
 
   mxconfig.driver = HUB75_I2S_CFG::SHIFTREG;
   mxconfig.clkphase = false;
@@ -152,7 +152,7 @@ void drawScrollingInfo() {
 }
 
 void drawTempHumi(int x, int y, int w, int h, uint16_t color, float temp,
-                  int humi) {
+                  int humi, char marker) {
   dma_display->fillRect(x, y, w, h, 0);
   dma_display->setTextSize(1);
   dma_display->setTextWrap(false);
@@ -169,8 +169,12 @@ void drawTempHumi(int x, int y, int w, int h, uint16_t color, float temp,
   dma_display->fillRect(deg_x, y + 1, 2, 2, color);
 
   // Move cursor past the degree symbol
-  dma_display->setCursor(deg_x + 3, y + 6);
-  dma_display->printf("C %d%%", humi);
+  dma_display->setCursor(deg_x + 4, y + 6);
+  if (marker == ' ') {
+    dma_display->printf("C %d%%", humi);
+  } else {
+    dma_display->printf("C %d%%%c", humi, marker);
+  }
 
   // Reset to standard font
   dma_display->setFont(NULL);
@@ -242,7 +246,7 @@ void drawWeatherIcon(int x, int y, int pressure) {
   }
 }
 
-void drawTempHumiStacked(int x, int w, uint16_t color, float temp, int humi) {
+void drawTempHumiStacked(int x, int w, uint16_t color, float temp, int humi, char marker) {
   // Clear column (Y=1 to 14)
   dma_display->fillRect(x, 1, w, 14, 0);
   dma_display->setTextSize(1);
@@ -276,7 +280,11 @@ void drawTempHumiStacked(int x, int w, uint16_t color, float temp, int humi) {
 
   // Humidity
   char humiStr[8];
-  sprintf(humiStr, "%d%%", humi);
+  if (marker == ' ') {
+    sprintf(humiStr, "%d%%", humi);
+  } else {
+    sprintf(humiStr, "%d%%%c", humi, marker);
+  }
   int humiLen = strlen(humiStr);
   // TomThumb is 3px + 1px spacing
   int humiWidth = humiLen * 4;
@@ -284,7 +292,7 @@ void drawTempHumiStacked(int x, int w, uint16_t color, float temp, int humi) {
   if (humiOffset < 0)
     humiOffset = 0;
 
-  dma_display->setCursor(x + humiOffset, L1_HUMI_Y);
+  dma_display->setCursor(x + humiOffset + 1, L1_HUMI_Y);
   dma_display->print(humiStr);
 
   dma_display->setFont(NULL);
@@ -295,7 +303,7 @@ void displayAmbientalData() {
     if (active_sensor > 0) {
       drawTempHumi(L2_SENSOR_DATA_X, L2_SENSOR_DATA_Y, SENSOR_AMB_DATA_WIDTH,
                    SENSOR_AMB_DATA_HEIGHT, hexToRGB565(l2_amb_color),
-                   sensorAmbTemp, sensorAmbHumi);
+                   sensorAmbTemp, sensorAmbHumi, 'i');
     } else {
       dma_display->fillRect(L2_SENSOR_DATA_X, L2_SENSOR_DATA_Y,
                             SENSOR_AMB_DATA_WIDTH, SENSOR_AMB_DATA_HEIGHT, 0);
@@ -311,7 +319,7 @@ void displayAmbientalData() {
 
     if (active_sensor > 0) {
       drawTempHumiStacked(L1_PART1_X, L1_PART_WIDTH, hexToRGB565(l1_amb_color),
-                          sensorAmbTemp, sensorAmbHumi);
+                          sensorAmbTemp, sensorAmbHumi, 'i');
     } else {
       dma_display->fillRect(L1_PART1_X, 1, L1_PART_WIDTH, 14, 0);
       dma_display->setTextSize(1);
@@ -339,7 +347,7 @@ void displaySensorData() {
     } else {
       drawTempHumi(L2_SENSOR_DATA_X, L2_SENSOR_DATA_Y, SENSOR_DATA_WIDTH,
                    SENSOR_DATA_HEIGHT, hexToRGB565(l2_out_color), sensorTemp,
-                   sensorHumi);
+                   sensorHumi, 'o');
     }
   } else {
     if (sensorDead) {
@@ -353,7 +361,7 @@ void displaySensorData() {
       dma_display->setFont(NULL);
     } else {
       drawTempHumiStacked(L1_PART3_X, L1_PART_WIDTH, hexToRGB565(l1_out_color),
-                          sensorTemp, sensorHumi);
+                          sensorTemp, sensorHumi, 'o');
     }
 
     // Draw Pressure in Part 2
