@@ -1,8 +1,5 @@
-// SPDX-License-Identifier: GPL-3.0-or-later
-
 
 #include <Arduino.h>
-// #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
 #include "common.h"
@@ -15,16 +12,6 @@
 char mqtt_buffer[MQTT_BUFMAX];
 
 void mqtt_callback(char *topic, byte *payload, unsigned int length) {
-  // handle message arrived
-  /*
-  Serial.print("Message arrived [");
-  Serial.print(topic);
-  Serial.print("] ");
-  for (unsigned int i = 0; i < length; i++) {
-    Serial.print((char)payload[i]);
-  }
-  Serial.println();
-  */
 
   if (strcmp(topic, mqtt_temp_topic.c_str()) == 0) {
     payload[length] = 0;
@@ -64,14 +51,11 @@ void mqtt_callback(char *topic, byte *payload, unsigned int length) {
   if (strcmp(topic, mqtt_layout_topic.c_str()) == 0) {
     payload[length] = 0;
     if (strcmp((char *)payload, "1") == 0) {
-      // L1
-      switchLayout(1);
+      switchLayout(1); // L1
     } else if (strcmp((char *)payload, "2") == 0) {
-      // L2 (which corresponds to Layout 0 internally)
-      switchLayout(0);
+      switchLayout(0); // L2 (which corresponds to Layout 0 internally)
     } else if (strcmp((char *)payload, "3") == 0) {
-      // Layout 2 (Countdown)
-      switchLayout(2);
+      switchLayout(2); // Layout 2 (Countdown)
     }
   }
 }

@@ -46,11 +46,12 @@ void setup() {
   delay(10);
   display_init();
 
-  env_sensor_init();
 
   displayTest(1000);
 
   loadSettings();
+
+  env_sensor_init();
 
   logStatusMessage("Connecting to WiFi!");
   Serial.print("Connecting to ");
@@ -313,12 +314,14 @@ void displayUpdater() {
 
   unsigned long epoch = mktime(&timeinfo);
   if (epoch != prevEpoch) {
-    if (currentLayout == 2) {
-      displayCountdown();
-    } else {
+    if (currentLayout != 2) {
       displayClock();
     }
     prevEpoch = epoch;
+  }
+
+  if (currentLayout == 2) {
+    displayCountdown();
   }
 
   static uint8_t tick_count = 0;

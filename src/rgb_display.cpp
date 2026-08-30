@@ -358,32 +358,23 @@ void displaySensorData() {
 
     // Draw Pressure in Part 2
     dma_display->fillRect(L1_PART2_X, 1, L1_PART_WIDTH, 14, 0);
-    if (active_sensor > 0) {
-      drawWeatherIcon(L1_PART2_X + 5, 1, sensorMSLP);
+    drawWeatherIcon(L1_PART2_X + 5, 1, sensorMSLP);
 
-      uint16_t pressureColor = (active_sensor == SENSOR_TYPE_BME280)
-                                   ? hexToRGB565(l1_amb_color)
-                                   : hexToRGB565(l1_out_color);
-      dma_display->setTextSize(1);
-      dma_display->setTextWrap(false);
-      dma_display->setTextColor(pressureColor);
-      dma_display->setFont(&TomThumb);
-      dma_display->setCursor(L1_PART2_X + 1, L1_HUMI_Y);
-      if (sensorPressure > 9999) {
-        dma_display->printf("%d", 9999);
-      } else {
-        dma_display->printf("%d", sensorPressure);
-      }
-      dma_display->setFont(NULL);
-      draw_hPa(L1_PART2_X + 16, 2, pressureColor);
+    uint16_t pressureColor = (active_sensor == SENSOR_TYPE_BME280)
+                                 ? hexToRGB565(l1_amb_color)
+                                 : hexToRGB565(l1_out_color);
+    dma_display->setTextSize(1);
+    dma_display->setTextWrap(false);
+    dma_display->setTextColor(pressureColor);
+    dma_display->setFont(&TomThumb);
+    dma_display->setCursor(L1_PART2_X + 1, L1_HUMI_Y);
+    if (sensorPressure > 9999) {
+      dma_display->printf("%d", 9999);
     } else {
-      dma_display->setTextSize(1);
-      dma_display->setTextColor(SENSOR_ERROR_DATA_COLOR);
-      dma_display->setFont(&TomThumb);
-      dma_display->setCursor(L1_PART2_X + 2, L1_TEMP_Y);
-      dma_display->print("N/A");
-      dma_display->setFont(NULL);
+      dma_display->printf("%d", sensorPressure);
     }
+    dma_display->setFont(NULL);
+    draw_hPa(L1_PART2_X + 16, 2, pressureColor);
   }
   newSensorData = false;
 }

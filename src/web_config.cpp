@@ -163,18 +163,26 @@ const char *html_page PROGMEM = R"=====(
                 </div>
 
                 <div class="section-title">Layer 1 (Time + Env)</div>
-                <div class="form-group"><label>Indoor Color (Sensor)</label><input type="color" name="l1_amb_col" id="l1_amb_col"></div>
-                <div class="form-group"><label>Outdoor Color (MQTT)</label><input type="color" name="l1_out_col" id="l1_out_col"></div>
-                <div class="form-group"><label>Clock Digit Color</label><input type="color" name="l1_clk_col" id="l1_clk_col"></div>
-                <div class="form-group"><label>Day & Date Color</label><input type="color" name="l1_dat_col" id="l1_dat_col"></div>
-                <div class="form-group"><label>Vertical Line Color</label><input type="color" name="l1_lin_col" id="l1_lin_col"></div>
+                <div class="flex-row">
+                    <div class="form-group" style="flex:1"><label>Indoor (Sensor)</label><input type="color" name="l1_amb_col" id="l1_amb_col"></div>
+                    <div class="form-group" style="flex:1"><label>Outdoor (MQTT)</label><input type="color" name="l1_out_col" id="l1_out_col"></div>
+                    <div class="form-group" style="flex:1"><label>Clock Digit</label><input type="color" name="l1_clk_col" id="l1_clk_col"></div>
+                </div>
+                <div class="flex-row">
+                    <div class="form-group" style="flex:1"><label>Day & Date</label><input type="color" name="l1_dat_col" id="l1_dat_col"></div>
+                    <div class="form-group" style="flex:1"><label>Vertical Line</label><input type="color" name="l1_lin_col" id="l1_lin_col"></div>
+                </div>
                 <div class="section-title">Layer 2 (Time Only)</div>
-                <div class="form-group"><label>Indoor Color (Sensor)</label><input type="color" name="l2_amb_col" id="l2_amb_col"></div>
-                <div class="form-group"><label>Outdoor Color (MQTT)</label><input type="color" name="l2_out_col" id="l2_out_col"></div>
-                <div class="form-group"><label>Clock Digit Color</label><input type="color" name="l2_color" id="l2_color"></div>
-                <div class="form-group"><label>Day & Date Color</label><input type="color" name="l2_dat_col" id="l2_dat_col"></div>
-                <div class="form-group"><label>Log Message Color</label><input type="color" name="log_color" id="log_color"></div>
-                <div class="form-group"><label>Rolling Message Color</label><input type="color" name="scroll_col" id="scroll_col"></div>
+                <div class="flex-row">
+                    <div class="form-group" style="flex:1"><label>Indoor (Sensor)</label><input type="color" name="l2_amb_col" id="l2_amb_col"></div>
+                    <div class="form-group" style="flex:1"><label>Outdoor (MQTT)</label><input type="color" name="l2_out_col" id="l2_out_col"></div>
+                    <div class="form-group" style="flex:1"><label>Clock Digit</label><input type="color" name="l2_color" id="l2_color"></div>
+                </div>
+                <div class="flex-row">
+                    <div class="form-group" style="flex:1"><label>Day & Date</label><input type="color" name="l2_dat_col" id="l2_dat_col"></div>
+                    <div class="form-group" style="flex:1"><label>Log Message</label><input type="color" name="log_color" id="log_color"></div>
+                    <div class="form-group" style="flex:1"><label>Rolling Msg</label><input type="color" name="scroll_col" id="scroll_col"></div>
+                </div>
 
                 <div class="section-title">Layer 3 (Countdown Timer)</div>
                 <div class="flex-row">
