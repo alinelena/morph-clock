@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef WEB_CONFIG_H
 #define WEB_CONFIG_H
 

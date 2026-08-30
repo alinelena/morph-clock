@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "rgb_display.h"
 #include "clock.h"
 #include "driver/gpio.h"

@@ -1,5 +1,9 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef CONFIG_H
 #define CONFIG_H
+
+#define FIRMWARE_VERSION "1.0.0"
 
 // --- Hardware Settings ---
 #define SENSOR_TYPE_AHT20 1

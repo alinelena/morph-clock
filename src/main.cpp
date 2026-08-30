@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 /*
 ESP32 Matrix Clock - Copyright (C) 2021 Bogdan Sass
 

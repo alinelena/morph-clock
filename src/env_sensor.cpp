@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "env_sensor.h"
 #include "common.h"
 #include "config.h"

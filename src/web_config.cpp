@@ -1,4 +1,7 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "web_config.h"
+#include "config.h"
 #include "settings.h"
 #include <DNSServer.h>
 #include <WebServer.h>
@@ -85,13 +88,14 @@ const char *html_page PROGMEM = R"=====(
 </head>
 <body>
     <div class="container">
-        <h1>Morphing Clock</h1>
+        <h1>Morphing Clock <span id="fw_version" style="font-size: 14px; color: var(--text-muted); font-weight: normal; vertical-align: middle;"></span></h1>
         
         <div class="tabs">
             <div class="tab active" onclick="switchTab('network')">Network</div>
             <div class="tab" onclick="switchTab('layout')">Layout Settings</div>
             <div class="tab" onclick="switchTab('timer')">Live Timer</div>
             <div class="tab" onclick="switchTab('update')">Firmware Update</div>
+            <div class="tab" onclick="switchTab('about')">About</div>
         </div>
         
         <form id="configForm" onsubmit="submitForm(event)">
@@ -221,6 +225,46 @@ const char *html_page PROGMEM = R"=====(
                 <button type="button" class="btn-reset" onclick="apiCall('reset')">Reset</button>
             </div>
         </div>
+        
+        <div id="about" class="tab-content">
+            <div class="section-title">System Information</div>
+            <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; font-size: 14px; line-height: 1.8;">
+                <div><strong style="color: var(--text-muted);">Firmware Version:</strong> <span id="info_fw"></span></div>
+                <div><strong style="color: var(--text-muted);">Build Date:</strong> <span id="info_build"></span></div>
+                <div><strong style="color: var(--text-muted);">Free Heap:</strong> <span id="info_heap"></span></div>
+                <div><strong style="color: var(--text-muted);">SDK Version:</strong> <span id="info_sdk"></span></div>
+            </div>
+            
+            <div class="section-title">Build Environment</div>
+            <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+                &bull; PlatformIO Core v6.1.19<br>
+                &bull; Platform Espressif 32 v55.3.311<br>
+                &bull; Framework Arduino ESP32 v3.3.11
+            </div>
+
+            <div class="section-title">Libraries Used</div>
+            <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+                &bull; ESP32 HUB75 LED MATRIX PANEL DMA Display v3.0.15<br>
+                &bull; Adafruit GFX Library v1.12.6<br>
+                &bull; Adafruit BusIO v1.17.4<br>
+                &bull; PubSubClient v2.8.0<br>
+                &bull; ArduinoJson v6.21.6<br>
+                &bull; ESPNtpClient v0.2.7<br>
+                &bull; ESP32httpUpdate v2.1.145<br>
+                &bull; Adafruit BME280 Library v2.3.0<br>
+                &bull; Adafruit AHTX0 v2.0.6
+            </div>
+
+            <div class="section-title">License</div>
+            <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+                <strong>GNU General Public License v3.0</strong><br><br>
+                This program is free software: you can redistribute it and/or modify
+                it under the terms of the GNU General Public License as published by
+                the Free Software Foundation, either version 3 of the License, or
+                (at your option) any later version.<br><br>
+                <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" style="color: var(--primary); text-decoration: none;">Read full license</a>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -228,10 +272,17 @@ const char *html_page PROGMEM = R"=====(
             document.querySelectorAll('.tab, .tab-content').forEach(el => el.classList.remove('active'));
             document.querySelector(`.tab[onclick="switchTab('${id}')"]`).classList.add('active');
             document.getElementById(id).classList.add('active');
-            document.getElementById('saveBtn').style.display = (id === 'timer' || id === 'update') ? 'none' : 'block';
+            document.getElementById('saveBtn').style.display = (id === 'timer' || id === 'update' || id === 'about') ? 'none' : 'block';
         }
 
         fetch('/settings').then(res => res.json()).then(data => {
+            if(data.version) {
+                document.getElementById('fw_version').innerText = "v" + data.version;
+                document.getElementById('info_fw').innerText = "v" + data.version;
+            }
+            if(data.build) document.getElementById('info_build').innerText = data.build;
+            if(data.heap) document.getElementById('info_heap').innerText = data.heap + " bytes";
+            if(data.sdk) document.getElementById('info_sdk').innerText = data.sdk;
             Object.keys(data).forEach(key => {
                 const el = document.getElementById(key);
                 if(el) el.value = data[key];
@@ -304,7 +355,11 @@ void handleGetSettings() {
   json += "\"tz\":\"" + timezone_str + "\",";
   json += "\"l3_def_cnt\":\"" + String(l3_default_countdown) + "\",";
   json += "\"def_layout\":\"" + String(default_layout) + "\",";
-  json += "\"act_sensor\":\"" + String(active_sensor) + "\"";
+  json += "\"act_sensor\":\"" + String(active_sensor) + "\",";
+  json += "\"version\":\"" + String(FIRMWARE_VERSION) + "\",";
+  json += "\"build\":\"" + String(__DATE__) + " " + String(__TIME__) + "\",";
+  json += "\"heap\":\"" + String(ESP.getFreeHeap()) + "\",";
+  json += "\"sdk\":\"" + String(ESP.getSdkVersion()) + "\"";
   json += "}";
   webServer.send(200, "application/json", json);
 }
