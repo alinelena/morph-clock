@@ -1,8 +1,8 @@
-# Yet another ESP32 Morphing Clock Shield Code
+# Yet another ESP32 Morphing Clock
 
 this is an evolution of this code https://github.com/bogd/esp32-morphing-clock.git
 and work with this shield https://github.com/hallard/WeMos-Matrix-Shield-DMA
-vibe coded to death with gemini.
+vibe coded to death with gemini, the panel is HUB75 P4 64x32.
 
 ## Features
 
