@@ -47,29 +47,30 @@ String hostname = HOSTNAME;
 int amb_refresh_interval = AMB_REFRESH_INTERVAL_SEC;
 int sensor_dead_interval = SENSOR_DEAD_INTERVAL_SEC;
 
-int pin_r1 = R1_PIN;
-int pin_g1 = G1_PIN;
-int pin_b1 = B1_PIN;
-int pin_r2 = R2_PIN;
-int pin_g2 = G2_PIN;
-int pin_b2 = B2_PIN;
-int pin_a = A_PIN;
-int pin_b = B_PIN;
-int pin_c = C_PIN;
-int pin_d = D_PIN;
-int pin_e = E_PIN;
-int pin_ldr = LDR_PIN;
-int pin_irq = IRQ_PIN;
-int pin_lat = LAT_PIN;
-int pin_oe = OE_PIN;
-int pin_clk = CLK_PIN;
+int8_t pin_r1 = R1_PIN;
+int8_t pin_g1 = G1_PIN;
+int8_t pin_b1 = B1_PIN;
+int8_t pin_r2 = R2_PIN;
+int8_t pin_g2 = G2_PIN;
+int8_t pin_b2 = B2_PIN;
+int8_t pin_a = A_PIN;
+int8_t pin_b = B_PIN;
+int8_t pin_c = C_PIN;
+int8_t pin_d = D_PIN;
+int8_t pin_e = E_PIN;
+int8_t pin_ldr = LDR_PIN;
+int8_t pin_irq = IRQ_PIN;
+int8_t pin_lat = LAT_PIN;
+int8_t pin_oe = OE_PIN;
+int8_t pin_clk = CLK_PIN;
 
-int pin_touch_button = TOUCH_BUTTON_PIN;
+int8_t pin_touch_button = TOUCH_BUTTON_PIN;
+int touch_threshold = TOUCH_THRESHOLD;
 
-int pin_aht20_sda = AHT20_SDA_PIN;
-int pin_aht20_scl = AHT20_SCL_PIN;
-int pin_bme280_sda = BME280_SDA_PIN;
-int pin_bme280_scl = BME280_SCL_PIN;
+int8_t pin_aht20_sda = AHT20_SDA_PIN;
+int8_t pin_aht20_scl = AHT20_SCL_PIN;
+int8_t pin_bme280_sda = BME280_SDA_PIN;
+int8_t pin_bme280_scl = BME280_SCL_PIN;
 
 void loadSettings() {
   Preferences preferences;
@@ -128,6 +129,7 @@ void loadSettings() {
   amb_refresh_interval = preferences.getInt("amb_int", AMB_REFRESH_INTERVAL_SEC);
   sensor_dead_interval = preferences.getInt("dead_int", SENSOR_DEAD_INTERVAL_SEC);
   altitude_meters = preferences.getInt("altitude", 35);
+  touch_threshold = preferences.getInt("touch_thresh", TOUCH_THRESHOLD);
 
   pin_r1 = preferences.getInt("pin_r1", R1_PIN);
   pin_g1 = preferences.getInt("pin_g1", G1_PIN);
@@ -201,6 +203,7 @@ void saveSettings() {
   preferences.putInt("amb_int", amb_refresh_interval);
   preferences.putInt("dead_int", sensor_dead_interval);
   preferences.putInt("altitude", altitude_meters);
+  preferences.putInt("touch_thresh", touch_threshold);
 
   preferences.putInt("pin_r1", pin_r1);
   preferences.putInt("pin_g1", pin_g1);

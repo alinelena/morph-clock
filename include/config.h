@@ -33,6 +33,7 @@
 
 // Button pin
 #define TOUCH_BUTTON_PIN 32
+#define TOUCH_THRESHOLD 400
 
 // Photoresistor (LDR) pin
 #define LDR_PIN 35

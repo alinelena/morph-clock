@@ -212,7 +212,7 @@ void loop() {
 
   int touchVal = touchRead(pin_touch_button);
 
-  if (touchVal < 600) {
+  if (touchVal > 0 && touchVal < touch_threshold) {
     if (!buttonPressed && (millis() - lastButtonPress > 500)) {
       buttonPressed = true;
       lastButtonPress = millis();

@@ -126,6 +126,13 @@ const char *html_page PROGMEM = R"=====(
             </div>
 
             <div id="layout" class="tab-content">
+                <div class="section-title">Instant Layout Switch</div>
+                <div class="btn-group" style="margin-bottom: 25px;">
+                    <button type="button" onclick="apiCall('layout1')" style="background: linear-gradient(135deg, #475569, #334155);">Layer 1</button>
+                    <button type="button" onclick="apiCall('layout2')" style="background: linear-gradient(135deg, #475569, #334155);">Layer 2</button>
+                    <button type="button" onclick="apiCall('layout3')" style="background: linear-gradient(135deg, #475569, #334155);">Layer 3</button>
+                </div>
+
                 <div class="section-title">General Layout Settings</div>
                 <div class="form-group">
                     <label>Ambient Sensor Connected</label>
@@ -166,12 +173,8 @@ const char *html_page PROGMEM = R"=====(
                     <div class="form-group" style="flex:1"><label>Sensor Refresh (s)</label><input type="number" name="amb_int" id="amb_int"></div>
                     <div class="form-group" style="flex:1"><label>Sensor Dead (s)</label><input type="number" name="dead_int" id="dead_int"></div>
                 </div>
-
-                <div class="section-title">Instant Layout Switch</div>
-                <div class="btn-group" style="margin-bottom: 25px;">
-                    <button type="button" onclick="apiCall('layout1')" style="background: linear-gradient(135deg, #475569, #334155);">Layer 1</button>
-                    <button type="button" onclick="apiCall('layout2')" style="background: linear-gradient(135deg, #475569, #334155);">Layer 2</button>
-                    <button type="button" onclick="apiCall('layout3')" style="background: linear-gradient(135deg, #475569, #334155);">Layer 3</button>
+                <div class="form-group">
+                    <label>Touch Threshold</label><input type="number" name="touch_thresh" id="touch_thresh">
                 </div>
 
                 <div class="section-title">Layer 1 (Time + Env)</div>
@@ -428,6 +431,7 @@ void handleGetSettings() {
   json += "\"hostname\":\"" + hostname + "\",";
   json += "\"amb_int\":\"" + String(amb_refresh_interval) + "\",";
   json += "\"dead_int\":\"" + String(sensor_dead_interval) + "\",";
+  json += "\"touch_thresh\":\"" + String(touch_threshold) + "\",";
   json += "\"l3_def_cnt\":\"" + String(l3_default_countdown) + "\",";
   json += "\"def_layout\":\"" + String(default_layout) + "\",";
   json += "\"act_sensor\":\"" + String(active_sensor) + "\",";
@@ -555,37 +559,39 @@ void handleSave() {
   hostname = doc["hostname"].as<String>();
   amb_refresh_interval = doc["amb_int"].as<int>();
   sensor_dead_interval = doc["dead_int"].as<int>();
+  if (doc.containsKey("touch_thresh"))
+    touch_threshold = doc["touch_thresh"].as<int>();
   default_layout = doc["def_layout"].as<int>();
   active_sensor = doc["act_sensor"].as<int>();
-  pin_r1 = doc["pin_r1"].as<int>();
-  pin_g1 = doc["pin_g1"].as<int>();
-  pin_b1 = doc["pin_b1"].as<int>();
-  pin_r2 = doc["pin_r2"].as<int>();
-  pin_g2 = doc["pin_g2"].as<int>();
-  pin_b2 = doc["pin_b2"].as<int>();
-  pin_a = doc["pin_a"].as<int>();
-  pin_b = doc["pin_b"].as<int>();
-  pin_c = doc["pin_c"].as<int>();
-  pin_d = doc["pin_d"].as<int>();
-  pin_e = doc["pin_e"].as<int>();
-  pin_lat = doc["pin_lat"].as<int>();
-  pin_oe = doc["pin_oe"].as<int>();
+  pin_r1 = doc["pin_r1"].as<int8_t>();
+  pin_g1 = doc["pin_g1"].as<int8_t>();
+  pin_b1 = doc["pin_b1"].as<int8_t>();
+  pin_r2 = doc["pin_r2"].as<int8_t>();
+  pin_g2 = doc["pin_g2"].as<int8_t>();
+  pin_b2 = doc["pin_b2"].as<int8_t>();
+  pin_a = doc["pin_a"].as<int8_t>();
+  pin_b = doc["pin_b"].as<int8_t>();
+  pin_c = doc["pin_c"].as<int8_t>();
+  pin_d = doc["pin_d"].as<int8_t>();
+  pin_e = doc["pin_e"].as<int8_t>();
+  pin_lat = doc["pin_lat"].as<int8_t>();
+  pin_oe = doc["pin_oe"].as<int8_t>();
   if (doc.containsKey("pin_clk"))
-    pin_clk = doc["pin_clk"].as<int>();
+    pin_clk = doc["pin_clk"].as<int8_t>();
   if (doc.containsKey("pin_touch"))
-    pin_touch_button = doc["pin_touch"].as<int>();
+    pin_touch_button = doc["pin_touch"].as<int8_t>();
   if (doc.containsKey("pin_ldr"))
-    pin_ldr = doc["pin_ldr"].as<int>();
+    pin_ldr = doc["pin_ldr"].as<int8_t>();
   if (doc.containsKey("pin_aht_sda"))
-    pin_aht20_sda = doc["pin_aht_sda"].as<int>();
+    pin_aht20_sda = doc["pin_aht_sda"].as<int8_t>();
   if (doc.containsKey("pin_aht_scl"))
-    pin_aht20_scl = doc["pin_aht_scl"].as<int>();
+    pin_aht20_scl = doc["pin_aht_scl"].as<int8_t>();
   if (doc.containsKey("pin_bme_sda"))
-    pin_bme280_sda = doc["pin_bme_sda"].as<int>();
+    pin_bme280_sda = doc["pin_bme_sda"].as<int8_t>();
   if (doc.containsKey("pin_bme_scl"))
-    pin_bme280_scl = doc["pin_bme_scl"].as<int>();
+    pin_bme280_scl = doc["pin_bme_scl"].as<int8_t>();
   if (doc.containsKey("pin_irq"))
-    pin_irq = doc["pin_irq"].as<int>();
+    pin_irq = doc["pin_irq"].as<int8_t>();
 
 
   saveSettings();
