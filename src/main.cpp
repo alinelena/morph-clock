@@ -277,7 +277,7 @@ void loop() {
   // Reset the watchdog timer as long as the main task is running
   esp_task_wdt_reset();
 
-  delay(500);
+  delay(10);
 }
 
 void displayUpdater() {
