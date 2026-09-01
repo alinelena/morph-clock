@@ -20,3 +20,32 @@ vibe coded to death with gemini, the panel is HUB75 P4 64x32.
 * **Countdown Timer**: Countdown feature with configurable color phases (start, warning, end thresholds).
 * **Capacitive Touch Button**: Cycle through display layouts using a touch-sensitive connection on Pin 32.
 * **OTA Firmware Updates**: Supports flashing new firmware over Wi-Fi via `ArduinoOTA` or by uploading a `.bin` file through the Web UI.
+
+## Web Interface
+
+The clock includes a built-in web portal for configuration and live control:
+
+### Network
+Configure Wi-Fi credentials, NTP time server, timezone offset/DST, and MQTT broker connection details.
+
+![Network Tab](pics/mc_network.png)
+
+### Layout Settings
+Adjust screen brightness, select default display layers, set sensor polling intervals and altitude/temperature offsets, and customize color schemes for digits, seconds, and environmental metrics.
+
+![Layout Settings Tab](pics/mc_layout.png)
+
+### Live Timer
+Trigger and manage live countdown timers with real-time feedback and configurable alert phases.
+
+![Live Timer Tab](pics/mc_timer.png)
+
+### Hardware Pins
+Configure I2C pins (SDA/SCL), capacitive touch input, and select environmental sensor type (BME280, AHT20, or None).
+
+![Hardware Pins Tab](pics/mc_pins.png)
+
+### Firmware Update
+Easily flash new firmware builds directly through the browser without needing a serial cable.
+
+![Firmware Update Tab](pics/mc_fw.png)
