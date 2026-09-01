@@ -44,6 +44,7 @@ void display_init() {
   dma_display = new MatrixPanel_I2S_DMA(mxconfig);
 
   dma_display->begin();
+  dma_display->setBrightness8(display_brightness);
 }
 
 void logStatusMessage(const char *message) {
@@ -213,18 +214,32 @@ void draw_hPa(int x, int y, uint16_t color) {
 
 void drawWeatherIcon(int x, int y, int pressure) {
   if (pressure > 1020) {
-    // Sun
-    // Yellow
-    uint16_t sunColor = dma_display->color565(255, 255, 0);
-    dma_display->fillRect(x + 3, y + 1, 3, 3, sunColor);
-    dma_display->drawPixel(x + 4, y, sunColor);
-    dma_display->drawPixel(x + 4, y + 4, sunColor);
-    dma_display->drawPixel(x + 2, y + 2, sunColor);
-    dma_display->drawPixel(x + 6, y + 2, sunColor);
-    dma_display->drawPixel(x + 1, y, sunColor);
-    dma_display->drawPixel(x + 7, y, sunColor);
-    dma_display->drawPixel(x + 1, y + 4, sunColor);
-    dma_display->drawPixel(x + 7, y + 4, sunColor);
+    bool isNight = (timeinfo.tm_hour >= 20 || timeinfo.tm_hour < 6);
+    if (isNight) {
+      // Moon
+      uint16_t moonColor = dma_display->color565(255, 240, 150);
+      dma_display->drawFastHLine(x + 3, y, 3, moonColor);
+      dma_display->drawFastHLine(x + 2, y + 1, 3, moonColor);
+      dma_display->drawFastHLine(x + 2, y + 2, 2, moonColor);
+      dma_display->drawFastHLine(x + 2, y + 3, 3, moonColor);
+      dma_display->drawFastHLine(x + 3, y + 4, 3, moonColor);
+      // Twinkling Star
+      uint16_t starColor = dma_display->color565(200, 220, 255);
+      dma_display->drawPixel(x + 7, y + 1, starColor);
+    } else {
+      // Sun
+      // Yellow
+      uint16_t sunColor = dma_display->color565(255, 255, 0);
+      dma_display->fillRect(x + 3, y + 1, 3, 3, sunColor);
+      dma_display->drawPixel(x + 4, y, sunColor);
+      dma_display->drawPixel(x + 4, y + 4, sunColor);
+      dma_display->drawPixel(x + 2, y + 2, sunColor);
+      dma_display->drawPixel(x + 6, y + 2, sunColor);
+      dma_display->drawPixel(x + 1, y, sunColor);
+      dma_display->drawPixel(x + 7, y, sunColor);
+      dma_display->drawPixel(x + 1, y + 4, sunColor);
+      dma_display->drawPixel(x + 7, y + 4, sunColor);
+    }
   } else {
     // Cloud
     uint16_t cloudColor = dma_display->color565(180, 200, 255);

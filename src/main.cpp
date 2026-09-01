@@ -50,6 +50,7 @@ void setup() {
   displayTest(1000);
 
   loadSettings();
+  dma_display->setBrightness8(display_brightness);
 
   env_sensor_init();
 
