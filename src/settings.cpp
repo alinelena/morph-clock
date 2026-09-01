@@ -38,7 +38,7 @@ int l3_default_countdown = 60;
 int default_layout = 1;
 // Default to BME280
 int active_sensor = 2;
-int display_brightness = 128;
+int display_brightness = 64;
 String timezone_str = "GMT0BST,M3.5.0/1,M10.5.0";
 int altitude_meters = 35;
 String ntp_server = NTP_SERVER;
@@ -119,8 +119,8 @@ void loadSettings() {
   l3_default_countdown = preferences.getInt("l3_def_cnt", 60);
   default_layout = preferences.getInt("def_layout", 1);
   active_sensor = preferences.getInt("act_sensor", 2);
-  // Default 128
-  display_brightness = preferences.getInt("brightness", 128);
+  // Default 64
+  display_brightness = preferences.getInt("brightness", 64);
   // Default GMT/BST
   timezone_str = preferences.getString("tz", "GMT0BST,M3.5.0/1,M10.5.0");
   ntp_server = preferences.getString("ntp_srv", NTP_SERVER);
