@@ -60,6 +60,7 @@ JTAG: 15 14 13 12
 #include <ESP32-HUB75-MatrixPanel-I2S-DMA.h>
 
 uint16_t colorWheel(uint8_t pos);
+uint16_t getTempComfortColor(float temp);
 void display_init();
 void logStatusMessage(const char *message);
 void logStatusMessage(String message);
