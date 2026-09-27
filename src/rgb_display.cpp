@@ -153,7 +153,9 @@ void drawScrollingInfo() {
 }
 
 uint16_t getTempComfortColor(float temp) {
-  if (temp < 10.0f) {
+  if (temp < 0.0f) {
+    return dma_display->color565(160, 0, 255); // Very Cold: Purple
+  } else if (temp < 10.0f) {
     return dma_display->color565(0, 0, 255); // Cold: Blue
   } else if (temp < 18.0f) {
     return dma_display->color565(0, 255, 255); // Cool: Cyan
@@ -168,9 +170,29 @@ uint16_t getTempComfortColor(float temp) {
   }
 }
 
+uint16_t getHumiComfortColor(int humi) {
+  if (humi < 20) {
+    return dma_display->color565(255, 0, 0); // Very Dry: Red
+  } else if (humi < 30) {
+    return dma_display->color565(255, 128, 0); // Dry: Orange
+  } else if (humi < 40) {
+    return dma_display->color565(255, 255, 0); // Slightly Dry: Yellow
+  } else if (humi < 60) {
+    return dma_display->color565(0, 255, 0); // Comfortable: Green
+  } else if (humi < 70) {
+    return dma_display->color565(0, 255, 255); // Slightly Humid: Cyan
+  } else if (humi < 80) {
+    return dma_display->color565(0, 0, 255); // Humid: Blue
+  } else {
+    return dma_display->color565(160, 0, 255); // Very Humid: Purple
+  }
+}
+
 void drawTempHumi(int x, int y, int w, int h, uint16_t color, float temp,
                   int humi, char marker) {
+  (void)color;
   uint16_t tempColor = getTempComfortColor(temp);
+  uint16_t humiColor = getHumiComfortColor(humi);
   dma_display->fillRect(x, y, w, h, 0);
   dma_display->setTextSize(1);
   dma_display->setTextWrap(false);
@@ -189,7 +211,7 @@ void drawTempHumi(int x, int y, int w, int h, uint16_t color, float temp,
   // Move cursor past the degree symbol
   dma_display->setCursor(deg_x + 4, y + 6);
   dma_display->print("C ");
-  dma_display->setTextColor(color);
+  dma_display->setTextColor(humiColor);
   if (marker == ' ') {
     dma_display->printf("%d%%", humi);
   } else {
@@ -281,7 +303,9 @@ void drawWeatherIcon(int x, int y, int pressure) {
 }
 
 void drawTempHumiStacked(int x, int w, uint16_t color, float temp, int humi, char marker) {
+  (void)color;
   uint16_t tempColor = getTempComfortColor(temp);
+  uint16_t humiColor = getHumiComfortColor(humi);
   // Clear column (Y=1 to 14)
   dma_display->fillRect(x, 1, w, 14, 0);
   dma_display->setTextSize(1);
@@ -314,7 +338,7 @@ void drawTempHumiStacked(int x, int w, uint16_t color, float temp, int humi, cha
   dma_display->print("C");
 
   // Humidity
-  dma_display->setTextColor(color);
+  dma_display->setTextColor(humiColor);
   char humiStr[8];
   if (marker == ' ') {
     sprintf(humiStr, "%d%%", humi);
