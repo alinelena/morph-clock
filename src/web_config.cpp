@@ -300,6 +300,28 @@ const char *html_page PROGMEM = R"=====(
                 <div><strong style="color: var(--text-muted);">Free Heap:</strong> <span id="info_heap"></span></div>
                 <div><strong style="color: var(--text-muted);">SDK Version:</strong> <span id="info_sdk"></span></div>
             </div>
+
+            <div class="section-title">Temperature Comfort Scale</div>
+            <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; font-size: 13px; line-height: 1.8; color: var(--text-muted);">
+                <div><span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:#A000FF; vertical-align:middle; margin-right:8px;"></span><strong style="color:#c084fc;">Very Cold (&lt; 0.0&deg;C):</strong> Purple (<code>#A000FF</code>)</div>
+                <div><span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:#0000FF; vertical-align:middle; margin-right:8px;"></span><strong style="color:#60a5fa;">Cold (0.0&deg;C &ndash; 9.9&deg;C):</strong> Blue (<code>#0000FF</code>)</div>
+                <div><span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:#00FFFF; vertical-align:middle; margin-right:8px;"></span><strong style="color:#00FFFF;">Cool (10.0&deg;C &ndash; 17.9&deg;C):</strong> Cyan (<code>#00FFFF</code>)</div>
+                <div><span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:#00FF00; vertical-align:middle; margin-right:8px;"></span><strong style="color:#00FF00;">Comfortable (18.0&deg;C &ndash; 23.9&deg;C):</strong> Green (<code>#00FF00</code>)</div>
+                <div><span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:#FFFF00; vertical-align:middle; margin-right:8px;"></span><strong style="color:#FFFF00;">Warm (24.0&deg;C &ndash; 26.9&deg;C):</strong> Yellow (<code>#FFFF00</code>)</div>
+                <div><span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:#FF8000; vertical-align:middle; margin-right:8px;"></span><strong style="color:#FF8000;">Hot (27.0&deg;C &ndash; 29.9&deg;C):</strong> Orange (<code>#FF8000</code>)</div>
+                <div><span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:#FF0000; vertical-align:middle; margin-right:8px;"></span><strong style="color:#FF0000;">Very Hot (&ge; 30.0&deg;C):</strong> Red (<code>#FF0000</code>)</div>
+            </div>
+
+            <div class="section-title">Humidity Comfort Scale</div>
+            <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; font-size: 13px; line-height: 1.8; color: var(--text-muted);">
+                <div><span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:#FF0000; vertical-align:middle; margin-right:8px;"></span><strong style="color:#FF0000;">Very Dry (&lt; 20%):</strong> Red (<code>#FF0000</code>)</div>
+                <div><span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:#FF8000; vertical-align:middle; margin-right:8px;"></span><strong style="color:#FF8000;">Dry (20% &ndash; 29%):</strong> Orange (<code>#FF8000</code>)</div>
+                <div><span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:#FFFF00; vertical-align:middle; margin-right:8px;"></span><strong style="color:#FFFF00;">Slightly Dry (30% &ndash; 39%):</strong> Yellow (<code>#FFFF00</code>)</div>
+                <div><span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:#00FF00; vertical-align:middle; margin-right:8px;"></span><strong style="color:#00FF00;">Comfortable (40% &ndash; 59%):</strong> Green (<code>#00FF00</code>)</div>
+                <div><span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:#00FFFF; vertical-align:middle; margin-right:8px;"></span><strong style="color:#00FFFF;">Slightly Humid (60% &ndash; 69%):</strong> Cyan (<code>#00FFFF</code>)</div>
+                <div><span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:#0000FF; vertical-align:middle; margin-right:8px;"></span><strong style="color:#60a5fa;">Humid (70% &ndash; 79%):</strong> Blue (<code>#0000FF</code>)</div>
+                <div><span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:#A000FF; vertical-align:middle; margin-right:8px;"></span><strong style="color:#c084fc;">Very Humid (&ge; 80%):</strong> Purple (<code>#A000FF</code>)</div>
+            </div>
             
             <div class="section-title">Build Environment</div>
             <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; font-size: 13px; line-height: 1.6; color: var(--text-muted);">
