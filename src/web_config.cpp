@@ -322,14 +322,6 @@ const char *html_page PROGMEM = R"=====(
                 <div><span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:#0000FF; vertical-align:middle; margin-right:8px;"></span><strong style="color:#60a5fa;">Humid (70% &ndash; 79%):</strong> Blue (<code>#0000FF</code>)</div>
                 <div><span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:#A000FF; vertical-align:middle; margin-right:8px;"></span><strong style="color:#c084fc;">Very Humid (&ge; 80%):</strong> Purple (<code>#A000FF</code>)</div>
             </div>
-
-            <div class="section-title">Pressure Scale (MSLP)</div>
-            <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; font-size: 13px; line-height: 1.8; color: var(--text-muted);">
-                <div><span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:#0000FF; vertical-align:middle; margin-right:8px;"></span><strong style="color:#60a5fa;">Rain / Low (&lt; 1005 hPa):</strong> Blue (<code>#0000FF</code>)</div>
-                <div><span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:#00FFFF; vertical-align:middle; margin-right:8px;"></span><strong style="color:#00FFFF;">Unsettled / Cloudy (1005 &ndash; 1012 hPa):</strong> Cyan (<code>#00FFFF</code>)</div>
-                <div><span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:#00FF00; vertical-align:middle; margin-right:8px;"></span><strong style="color:#00FF00;">Normal (1013 &ndash; 1020 hPa):</strong> Green (<code>#00FF00</code>)</div>
-                <div><span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:#FFFF00; vertical-align:middle; margin-right:8px;"></span><strong style="color:#FFFF00;">Dry / Fair (&gt; 1020 hPa):</strong> Yellow (<code>#FFFF00</code>)</div>
-            </div>
             
             <div class="section-title">Build Environment</div>
             <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; font-size: 13px; line-height: 1.6; color: var(--text-muted);">
