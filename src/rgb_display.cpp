@@ -188,6 +188,18 @@ uint16_t getHumiComfortColor(int humi) {
   }
 }
 
+uint16_t getPressureComfortColor(int pressure) {
+  if (pressure < 1005) {
+    return dma_display->color565(0, 0, 255); // Rain / Low: Blue
+  } else if (pressure < 1013) {
+    return dma_display->color565(0, 255, 255); // Unsettled / Cloudy: Cyan
+  } else if (pressure <= 1020) {
+    return dma_display->color565(0, 255, 0); // Normal: Green
+  } else {
+    return dma_display->color565(255, 255, 0); // Dry / Fair: Yellow
+  }
+}
+
 void drawTempHumi(int x, int y, int w, int h, uint16_t color, float temp,
                   int humi, char marker) {
   (void)color;
@@ -428,9 +440,7 @@ void displaySensorData() {
     dma_display->fillRect(L1_PART2_X, 1, L1_PART_WIDTH, 14, 0);
     drawWeatherIcon(L1_PART2_X + 5, 1, sensorMSLP);
 
-    uint16_t pressureColor = (active_sensor == SENSOR_TYPE_BME280)
-                                 ? hexToRGB565(l1_amb_color)
-                                 : hexToRGB565(l1_out_color);
+    uint16_t pressureColor = getPressureComfortColor(sensorMSLP);
     dma_display->setTextSize(1);
     dma_display->setTextWrap(false);
     dma_display->setTextColor(pressureColor);
